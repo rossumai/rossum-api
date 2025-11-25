@@ -146,6 +146,34 @@ Models
 
 .. raw:: html
 
+   <h4>Section</h4>
+
+.. autoclass:: rossum_api.models.schema.Section
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>Datapoint</h4>
+
+.. autoclass:: rossum_api.models.schema.Datapoint
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>Multivalue</h4>
+
+.. autoclass:: rossum_api.models.schema.Multivalue
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>Tuple</h4>
+
+.. autoclass:: rossum_api.models.schema.Tuple
+   :no-index-entry:
+
+.. raw:: html
+
    <h4>Task</h4>
 
 .. autoclass:: rossum_api.models.task.Task
