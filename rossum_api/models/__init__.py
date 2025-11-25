@@ -80,6 +80,10 @@ def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
     for example datetime.
     """
     model_class = RESOURCE_TO_MODEL[resource]
+
+    if resource == Resource.Schema:
+        return Schema.from_dict(payload)
+
     return dacite.from_dict(
         model_class, payload, config=dacite.Config(cast=[Enum], convert_key=_convert_key)
     )
