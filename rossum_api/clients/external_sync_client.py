@@ -41,6 +41,7 @@ from rossum_api.models.hook import Hook
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
 from rossum_api.models.queue import Queue
+from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
 from rossum_api.models.schema import Schema
 from rossum_api.models.task import Task
@@ -61,6 +62,7 @@ from rossum_api.types import (
     InboxType,
     OrganizationType,
     QueueType,
+    RelationType,
     RuleType,
     SchemaType,
     TaskType,
@@ -85,6 +87,7 @@ if TYPE_CHECKING:
         HookOrdering,
         OrganizationOrdering,
         QueueOrdering,
+        RelationOrdering,
         RuleOrdering,
         SchemaOrdering,
         UserOrdering,
@@ -111,6 +114,7 @@ class SyncRossumAPIClient(
         EmailType,
         OrganizationType,
         QueueType,
+        RelationType,
         RuleType,
         SchemaType,
         TaskType,
@@ -1277,6 +1281,55 @@ class SyncRossumAPIClient(
         """
         self.internal_client.delete(Resource.DocumentRelation, document_relation_id)
 
+    # ##### RELATIONS #####
+
+    def list_relations(
+        self, ordering: Sequence[RelationOrdering] = (), **filters: Any
+    ) -> Iterator[RelationType]:
+        """Retrieve all :class:`~rossum_api.models.relation.Relation` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their URLs are used for sorting the results
+        filters
+            id: ID of the :class:`~rossum_api.models.relation.Relation`.
+
+            type: Relation type, see :class:`~rossum_api.models.relation.RelationType`.
+
+            parent: ID of parent :class:`~rossum_api.models.annotation.Annotation`.
+
+            key: Relation key.
+
+            annotation: ID of related :class:`~rossum_api.models.annotation.Annotation`.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#list-all-relations.
+
+        https://elis.rossum.ai/api/docs/#relation.
+        """
+        for r in self.internal_client.fetch_resources(Resource.Relation, ordering, **filters):
+            yield self._deserializer(Resource.Relation, r)
+
+    def create_new_relation(self, data: dict[str, Any]) -> RelationType:
+        """Create a new :class:`~rossum_api.models.relation.Relation` object.
+
+        Parameters
+        ----------
+        data
+            :class:`~rossum_api.models.relation.Relation` object configuration.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#create-a-new-relation.
+
+        https://elis.rossum.ai/api/docs/#relation.
+        """
+        relation = self.internal_client.create(Resource.Relation, data)
+
+        return self._deserializer(Resource.Relation, relation)
+
     # ##### WORKSPACES #####
 
     def list_workspaces(
@@ -1889,6 +1942,7 @@ SyncRossumAPIClientWithDefaultDeserializer = SyncRossumAPIClient[
     Email,
     Organization,
     Queue,
+    Relation,
     Rule,
     Schema,
     Task,
