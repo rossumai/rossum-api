@@ -23,6 +23,7 @@ class TestEngine:
             "training_queues": ["https://elis.rossum.ai/api/v1/queues/42"],
             "description": "Test engine",
             "agenda_id": "test_agenda_id",
+            "organization": "https://elis.rossum.ai/api/v1/organizations/1",
         }
 
     async def test_retrieve_engine(self, elis_client, dummy_engine):
