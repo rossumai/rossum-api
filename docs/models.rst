@@ -111,6 +111,20 @@ Models
 
 .. raw:: html
 
+   <h4>Relation</h4>
+
+.. autoclass:: rossum_api.models.relation.Relation
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>RelationType</h4>
+
+.. autoclass:: rossum_api.models.relation.RelationType
+   :no-index-entry:
+
+.. raw:: html
+
    <h4>Rule</h4>
 
 .. autoclass:: rossum_api.models.rule.Rule
