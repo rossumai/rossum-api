@@ -1154,13 +1154,15 @@ class SyncRossumAPIClient(
         ordering
             List of object names. Their URLs are used for sorting the results
         filters
-            id: ID of a :class:`~rossum_api.models.document_relation.DocumentRelation`
+            id: ID of :class:`~rossum_api.models.document_relation.DocumentRelation`.
 
-            type: Type of the document relation
+            type: Relation type.
 
-            key: Key for the document relation
+            annotation: ID of :class:`~rossum_api.models.annotation.Annotation`.
 
-            parent: ID of a parent :class:`~rossum_api.models.document.Document`
+            key: Document relation key
+
+            documents: ID of related :class:`~rossum_api.models.document.Document`.
 
         References
         ----------
