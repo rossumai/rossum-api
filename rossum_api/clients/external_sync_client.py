@@ -1387,9 +1387,9 @@ class SyncRossumAPIClient(
         filters
             id: ID of an :class:`~rossum_api.models.engine.Engine`
 
-            name: Name of an :class:`~rossum_api.models.engine.Engine`
+            type: Type of an :class:`~rossum_api.models.engine.Engine`
 
-            description: Description of an :class:`~rossum_api.models.engine.Engine`
+            agenda_id: ID of the agenda associated with this engine
 
         References
         ----------
