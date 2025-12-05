@@ -63,6 +63,34 @@ class TestDocumentRelations:
 
         http_client.fetch_all.assert_called_with(Resource.DocumentRelation, ())
 
+    async def test_list_document_relations_with_filters(
+        self,
+        elis_client: tuple[AsyncRossumAPIClientWithDefaultDeserializer, MagicMock],
+        dummy_document_relation: dict[str, Any],
+        mock_generator,
+    ) -> None:
+        client, http_client = elis_client
+        http_client.fetch_all.return_value = mock_generator(dummy_document_relation)
+
+        document_relations = client.list_document_relations(
+            type=DocumentRelationType.EXPORT.value,
+            annotation=406,
+            key="some-key",
+            documents=124,
+        )
+
+        async for w in document_relations:
+            assert w == DocumentRelation(**dummy_document_relation)
+
+        http_client.fetch_all.assert_called_with(
+            Resource.DocumentRelation,
+            (),
+            type=DocumentRelationType.EXPORT.value,
+            annotation=406,
+            key="some-key",
+            documents=124,
+        )
+
     async def test_retrieve_document_relation(
         self,
         elis_client: tuple[AsyncRossumAPIClientWithDefaultDeserializer, MagicMock],
@@ -163,6 +191,33 @@ class TestDocumentRelationsSync:
             assert w == DocumentRelation(**dummy_document_relation)
 
         http_client.fetch_resources.assert_called_with(Resource.DocumentRelation, ())
+
+    def test_list_document_relations_with_filters(
+        self,
+        elis_client_sync: tuple[SyncRossumAPIClientWithDefaultDeserializer, MagicMock],
+        dummy_document_relation: dict[str, Any],
+    ) -> None:
+        client, http_client = elis_client_sync
+        http_client.fetch_resources.return_value = iter((dummy_document_relation,))
+
+        document_relations = client.list_document_relations(
+            type=DocumentRelationType.EXPORT.value,
+            annotation=406,
+            key="some-key",
+            documents=124,
+        )
+
+        for w in document_relations:
+            assert w == DocumentRelation(**dummy_document_relation)
+
+        http_client.fetch_resources.assert_called_with(
+            Resource.DocumentRelation,
+            (),
+            type=DocumentRelationType.EXPORT.value,
+            annotation=406,
+            key="some-key",
+            documents=124,
+        )
 
     def test_retrieve_document_relation(
         self,
