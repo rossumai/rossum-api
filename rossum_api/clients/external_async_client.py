@@ -43,6 +43,7 @@ from rossum_api.models.hook import Hook
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
 from rossum_api.models.queue import Queue
+from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
 from rossum_api.models.schema import Schema
 from rossum_api.models.task import Task
@@ -63,6 +64,7 @@ from rossum_api.types import (
     InboxType,
     OrganizationType,
     QueueType,
+    RelationType,
     RuleType,
     SchemaType,
     TaskType,
@@ -86,6 +88,7 @@ if TYPE_CHECKING:
         HookOrdering,
         OrganizationOrdering,
         QueueOrdering,
+        RelationOrdering,
         RuleOrdering,
         SchemaOrdering,
         UserOrdering,
@@ -111,6 +114,7 @@ class AsyncRossumAPIClient(
         EmailType,
         OrganizationType,
         QueueType,
+        RelationType,
         RuleType,
         SchemaType,
         TaskType,
@@ -1355,6 +1359,55 @@ class AsyncRossumAPIClient(
         """
         await self._http_client.delete(Resource.DocumentRelation, document_relation_id)
 
+    # ##### RELATIONS #####
+
+    async def list_relations(
+        self, ordering: Sequence[RelationOrdering] = (), **filters: Any
+    ) -> AsyncIterator[RelationType]:
+        """Retrieve all :class:`~rossum_api.models.relation.Relation` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their URLs are used for sorting the results
+        filters
+            id: ID of the :class:`~rossum_api.models.relation.Relation`.
+
+            type: Relation type, see :class:`~rossum_api.models.relation.RelationType`.
+
+            parent: ID of parent :class:`~rossum_api.models.annotation.Annotation`.
+
+            key: Relation key.
+
+            annotation: ID of related :class:`~rossum_api.models.annotation.Annotation`.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#list-all-relations.
+
+        https://elis.rossum.ai/api/docs/#relation.
+        """
+        async for r in self._http_client.fetch_all(Resource.Relation, ordering, **filters):
+            yield self._deserializer(Resource.Relation, r)
+
+    async def create_new_relation(self, data: dict[str, Any]) -> RelationType:
+        """Create a new :class:`~rossum_api.models.relation.Relation` object.
+
+        Parameters
+        ----------
+        data
+            :class:`~rossum_api.models.relation.Relation` object configuration.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#create-a-new-relation.
+
+        https://elis.rossum.ai/api/docs/#relation.
+        """
+        relation = await self._http_client.create(Resource.Relation, data)
+
+        return self._deserializer(Resource.Relation, relation)
+
     # ##### WORKSPACES #####
     async def list_workspaces(
         self, ordering: Sequence[WorkspaceOrdering] = (), **filters: Any
@@ -1434,8 +1487,21 @@ class AsyncRossumAPIClient(
         return await self._http_client.delete(Resource.Workspace, workspace_id)
 
     # ##### ENGINE #####
+
     async def retrieve_engine(self, engine_id: int) -> EngineType:
-        """https://elis.rossum.ai/api/docs/#retrieve-an-engine."""
+        """Retrieve a single :class:`~rossum_api.models.engine.Engine` object.
+
+        Parameters
+        ----------
+        engine_id
+            ID of an engine to be retrieved.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#retrieve-an-engine.
+
+        https://elis.rossum.ai/api/docs/#engine.
+        """
         engine = await self._http_client.fetch_one(Resource.Engine, engine_id)
 
         return self._deserializer(Resource.Engine, engine)
@@ -1443,7 +1509,27 @@ class AsyncRossumAPIClient(
     async def list_engines(
         self, ordering: Sequence[str] = (), sideloads: Sequence[Sideload] = (), **filters: Any
     ) -> AsyncIterator[EngineType]:
-        """https://elis.rossum.ai/api/docs/internal/#list-all-engines."""
+        """Retrieve all :class:`~rossum_api.models.engine.Engine` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their URLs are used for sorting the results
+        sideloads
+            List of additional objects to sideload
+        filters
+            id: ID of an :class:`~rossum_api.models.engine.Engine`
+
+            type: Type of an :class:`~rossum_api.models.engine.Engine`
+
+            agenda_id: ID of the agenda associated with this engine
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/internal/#list-all-engines.
+
+        https://elis.rossum.ai/api/docs/#engine.
+        """
         async for engine in self._http_client.fetch_all(
             Resource.Engine, ordering, sideloads, **filters
         ):
@@ -1452,7 +1538,19 @@ class AsyncRossumAPIClient(
     async def retrieve_engine_fields(
         self, engine_id: int | None = None
     ) -> AsyncIterator[EngineFieldType]:
-        """https://elis.rossum.ai/api/docs/internal/#engine-field."""
+        """Retrieve all :class:`~rossum_api.models.engine.EngineField` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        engine_id
+            ID of an engine to retrieve fields for. If None, retrieves all engine fields.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/internal/#engine-field.
+
+        https://elis.rossum.ai/api/docs/#engine-field.
+        """
         async for engine_field in self._http_client.fetch_all(
             Resource.EngineField, engine=engine_id
         ):
@@ -1937,6 +2035,7 @@ AsyncRossumAPIClientWithDefaultDeserializer = AsyncRossumAPIClient[
     Email,
     Organization,
     Queue,
+    Relation,
     Rule,
     Schema,
     Task,

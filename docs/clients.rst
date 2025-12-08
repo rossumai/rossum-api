@@ -323,6 +323,61 @@ Both export formats are supported:
        # Process file chunk
        pass
 
+Working with Relations
+~~~~~~~~~~~~~~~~~~~~~~
+
+Relations represent parent-child relationships between annotations (e.g., duplicates, attachments, edits):
+
+**Async version:**
+
+.. code-block:: python
+
+   from rossum_api.models.relation import RelationType
+
+   # List all relations
+   async for relation in client.list_relations():
+       print(relation.id, relation.type)
+
+   # Filter by type
+   async for relation in client.list_relations(type="duplicate"):
+       print(relation.id, relation.key)
+
+   # Filter by parent annotation
+   async for relation in client.list_relations(parent=12345):
+       print(relation.id, relation.annotations)
+
+   # Create a new relation
+   relation = await client.create_new_relation(data={
+       "type": "attachment",
+       "parent": "https://elis.rossum.ai/api/v1/annotations/123",
+       "annotations": ["https://elis.rossum.ai/api/v1/annotations/456"]
+   })
+
+**Sync version:**
+
+.. code-block:: python
+
+   from rossum_api.models.relation import RelationType
+
+   # List all relations
+   for relation in client.list_relations():
+       print(relation.id, relation.type)
+
+   # Filter by type
+   for relation in client.list_relations(type="duplicate"):
+       print(relation.id, relation.key)
+
+   # Filter by parent annotation
+   for relation in client.list_relations(parent=12345):
+       print(relation.id, relation.annotations)
+
+   # Create a new relation
+   relation = client.create_new_relation(data={
+       "type": "attachment",
+       "parent": "https://elis.rossum.ai/api/v1/annotations/123",
+       "annotations": ["https://elis.rossum.ai/api/v1/annotations/456"]
+   })
+
 Working with Additional Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

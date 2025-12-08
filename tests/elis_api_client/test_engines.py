@@ -23,6 +23,7 @@ class TestEngine:
             "training_queues": ["https://elis.rossum.ai/api/v1/queues/42"],
             "description": "Test engine",
             "agenda_id": "test_agenda_id",
+            "organization": "https://elis.rossum.ai/api/v1/organizations/1",
         }
 
     async def test_retrieve_engine(self, elis_client, dummy_engine):
@@ -86,3 +87,78 @@ class TestEngineFields:
             assert engine_field == EngineField(**dummy_engine_field)
 
         http_client.fetch_all.assert_called_with(Resource.EngineField, engine=TEST_ENGINE_ID)
+
+
+class TestEngineSync:
+    @pytest.fixture
+    def dummy_engine(self):
+        return {
+            "id": TEST_ENGINE_ID,
+            "url": f"https://elis.rossum.ai/api/v1/engines/{TEST_ENGINE_ID}",
+            "name": "test_engine",
+            "type": "extractor",
+            "learning_enabled": False,
+            "training_queues": ["https://elis.rossum.ai/api/v1/queues/42"],
+            "description": "Test engine",
+            "agenda_id": "test_agenda_id",
+            "organization": "https://elis.rossum.ai/api/v1/organizations/1",
+        }
+
+    def test_retrieve_engine(self, elis_client_sync, dummy_engine):
+        client, http_client = elis_client_sync
+        http_client.fetch_resource.return_value = dummy_engine
+
+        engine: Engine = client.retrieve_engine(TEST_ENGINE_ID)
+
+        assert engine == Engine(**dummy_engine)
+        http_client.fetch_resource.assert_called_with(Resource.Engine, TEST_ENGINE_ID)
+
+    def test_list_engines(self, elis_client_sync, dummy_engine):
+        client, http_client = elis_client_sync
+        http_client.fetch_resources.return_value = iter((dummy_engine,))
+
+        engines = client.list_engines()
+
+        for engine in engines:
+            assert engine == Engine(**dummy_engine)
+
+        http_client.fetch_resources.assert_called_with(Resource.Engine, (), ())
+
+    def test_retrieve_engine_queues(self, elis_client_sync, dummy_queue):
+        client, http_client = elis_client_sync
+        http_client.fetch_resources.return_value = iter((dummy_queue,))
+
+        queues = client.retrieve_engine_queues(TEST_ENGINE_ID)
+
+        for queue in queues:
+            assert queue == Queue(**dummy_queue)
+
+        http_client.fetch_resources.assert_called_with(Resource.Queue, engine=TEST_ENGINE_ID)
+
+
+class TestEngineFieldsSync:
+    @pytest.fixture
+    def dummy_engine_field(self):
+        return {
+            "id": 456,
+            "url": f"https://elis.rossum.ai/api/v1/engine_fields/{TEST_ENGINE_ID}",
+            "engine": f"https://elis.rossum.ai/api/v1/engines/{TEST_ENGINE_ID}",
+            "name": f"test_engine_field_{TEST_ENGINE_ID}",
+            "label": "Test engine field",
+            "type": "string",
+            "subtype": "alphanumeric",
+            "pre_trained_field_id": "document_id",
+            "tabular": False,
+            "multiline": "false",
+        }
+
+    def test_retrieve_engine_fields(self, elis_client_sync, dummy_engine_field):
+        client, http_client = elis_client_sync
+        http_client.fetch_resources.return_value = iter((dummy_engine_field,))
+
+        engine_fields = client.retrieve_engine_fields(TEST_ENGINE_ID)
+
+        for engine_field in engine_fields:
+            assert engine_field == EngineField(**dummy_engine_field)
+
+        http_client.fetch_resources.assert_called_with(Resource.EngineField, engine=TEST_ENGINE_ID)

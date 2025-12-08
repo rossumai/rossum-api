@@ -32,6 +32,8 @@ class Engine:
         Description of the engine.
     agenda_id
         ID of the agenda associated with this engine.
+    organization
+        URL of related organization.
 
     References
     ----------
@@ -47,6 +49,7 @@ class Engine:
     training_queues: list[str]
     description: str
     agenda_id: str
+    organization: str
 
 
 @dataclass
