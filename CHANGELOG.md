@@ -1,6 +1,36 @@
 # CHANGELOG
 
 
+## v3.7.0 (2025-12-08)
+
+### Bug Fixes
+
+- Fix filters on Engine & add missing tests and docstrings
+  ([`e98ce30`](https://github.com/rossumai/rossum-api/commit/e98ce30d3e42dd06217ad09f7049f0f7ebd9150d))
+
+- Fix filters on sync listing of Document Relations
+  ([`30e0419`](https://github.com/rossumai/rossum-api/commit/30e0419b7bbe0e89989f43557998487db03179ce))
+
+### Chores
+
+- Add organization field on Engine
+  ([`8c8848f`](https://github.com/rossumai/rossum-api/commit/8c8848fd2c2db45590ceb993f3e275707422db7f))
+
+- Add package description
+  ([`2156bed`](https://github.com/rossumai/rossum-api/commit/2156bed8f79c57e5a8687c0be2d411db54ef4b91))
+
+- Run check commit convention step in CI
+  ([`df96a93`](https://github.com/rossumai/rossum-api/commit/df96a93e8f3ecd710923f2bfa3bca1be3c6943b8))
+
+### Features
+
+- Add parent-child Relation object and supported API calls
+  ([`8d9688d`](https://github.com/rossumai/rossum-api/commit/8d9688dfa2bd7c5b3f2f9d2ff71580d4c5d6020b))
+
+- Deserialize schema content into proper dataclasses
+  ([`76b9d86`](https://github.com/rossumai/rossum-api/commit/76b9d86f0b05a272bfcd7c16cdb3a58d13977288))
+
+
 ## v3.6.1 (2025-11-13)
 
 ### Bug Fixes
