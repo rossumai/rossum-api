@@ -22,6 +22,31 @@ def dummy_connector():
     }
 
 
+@pytest.fixture
+def dummy_connector_with_null_optional_fields():
+    return {
+        "id": 1501,
+        "name": "MyQ Connector Minimal",
+        "queues": ["https://elis.rossum.ai/api/v1/queues/8199"],
+        "url": "https://elis.rossum.ai/api/v1/connectors/1501",
+        "service_url": "https://myq.east-west-trading.com",
+        "params": None,
+        "client_ssl_certificate": None,
+        "authorization_token": None,
+        "asynchronous": True,
+        "metadata": {},
+    }
+
+
+class TestConnectorModel:
+    def test_connector_with_null_optional_fields(self, dummy_connector_with_null_optional_fields):
+        connector = Connector(**dummy_connector_with_null_optional_fields)
+
+        assert connector.params is None
+        assert connector.client_ssl_certificate is None
+        assert connector.authorization_token is None
+
+
 @pytest.mark.asyncio
 class TestConnectors:
     async def test_list_connectors(self, elis_client, dummy_connector, mock_generator):
