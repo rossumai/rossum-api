@@ -39,10 +39,28 @@ def dummy_rule():
 
 
 @pytest.fixture
+def dummy_rule_without_schema(dummy_rule):
+    """Creates a Rule dict without schema field (optional field)."""
+    rule_data = dummy_rule.copy()
+    rule_data["schema"] = None
+    return rule_data
+
+
+@pytest.fixture
 def expected_rule(dummy_rule):
     """Creates a Rule object with properly constructed RuleAction objects."""
     rule_data = dummy_rule.copy()
     rule_data["actions"] = [RuleAction(**action) for action in dummy_rule["actions"]]
+    return Rule(**rule_data)
+
+
+@pytest.fixture
+def expected_rule_without_schema(dummy_rule_without_schema):
+    """Creates a Rule object without schema."""
+    rule_data = dummy_rule_without_schema.copy()
+    rule_data["actions"] = [
+        RuleAction(**action) for action in dummy_rule_without_schema["actions"]
+    ]
     return Rule(**rule_data)
 
 
@@ -126,6 +144,20 @@ class TestRules:
 
         http_client.delete.assert_called_with(Resource.Rule, rid)
 
+    async def test_retrieve_rule_without_schema(
+        self, elis_client, dummy_rule_without_schema, expected_rule_without_schema
+    ):
+        client, http_client = elis_client
+        http_client.fetch_one.return_value = dummy_rule_without_schema
+
+        uid = dummy_rule_without_schema["id"]
+        rule = await client.retrieve_rule(uid)
+
+        assert rule == expected_rule_without_schema
+        assert rule.schema is None
+
+        http_client.fetch_one.assert_called_with(Resource.Rule, uid)
+
 
 class TestRulesSync:
     def test_list_rules(self, elis_client_sync, dummy_rule, expected_rule):
@@ -205,3 +237,17 @@ class TestRulesSync:
         client.delete_rule(rid)
 
         http_client.delete.assert_called_with(Resource.Rule, rid)
+
+    def test_retrieve_rule_without_schema(
+        self, elis_client_sync, dummy_rule_without_schema, expected_rule_without_schema
+    ):
+        client, http_client = elis_client_sync
+        http_client.fetch_resource.return_value = dummy_rule_without_schema
+
+        uid = dummy_rule_without_schema["id"]
+        rule = client.retrieve_rule(uid)
+
+        assert rule == expected_rule_without_schema
+        assert rule.schema is None
+
+        http_client.fetch_resource.assert_called_with(Resource.Rule, uid)
