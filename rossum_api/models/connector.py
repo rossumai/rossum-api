@@ -48,9 +48,9 @@ class Connector:
     name: str
     url: str
     service_url: str
-    params: str
-    client_ssl_certificate: str
-    authorization_token: str
+    params: str | None
+    client_ssl_certificate: str | None
+    authorization_token: str | None
     client_ssl_key: str | None = None
     queues: list[str] = field(default_factory=list)
     authorization_type: str = "secret_key"
