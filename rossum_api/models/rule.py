@@ -105,7 +105,7 @@ class Rule:
     name: str
     enabled: bool
     organization: str
-    schema: str
+    schema: str | None = None
     trigger_condition: str = "True"
     url: str | None = None
     created_by: str | None = None
