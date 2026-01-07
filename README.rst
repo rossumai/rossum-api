@@ -7,12 +7,12 @@ Rossum API
    :target: https://pypi.org/project/rossum-api/
    :alt: PyPI version
 
-.. |build| image:: https://github.com/rossumai/rossum-sdk/actions/workflows/test-and-deploy.yaml/badge.svg
-   :target: https://github.com/rossumai/rossum-sdk/actions
+.. |build| image:: https://github.com/rossumai/rossum-api/actions/workflows/test-and-deploy.yaml/badge.svg
+   :target: https://github.com/rossumai/rossum-api/actions
    :alt: Build Status
 
-.. |coverage| image:: https://codecov.io/gh/rossumai/rossum-sdk/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/rossumai/rossum-sdk
+.. |coverage| image:: https://codecov.io/gh/rossumai/rossum-api/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/rossumai/rossum-api
    :alt: Coverage
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
