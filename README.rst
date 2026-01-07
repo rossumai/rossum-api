@@ -1,11 +1,15 @@
 Rossum API
 ==========
 
-|pypi| |build| |coverage| |ruff| |docs| |license|
+|pypi| |python| |build| |coverage| |ruff| |docs| |license|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/rossum-api.svg
    :target: https://pypi.org/project/rossum-api/
    :alt: PyPI version
+
+.. |python| image:: https://img.shields.io/pypi/pyversions/rossum-api.svg
+   :target: https://pypi.org/project/rossum-api/
+   :alt: Python versions
 
 .. |build| image:: https://github.com/rossumai/rossum-api/actions/workflows/test-and-deploy.yaml/badge.svg
    :target: https://github.com/rossumai/rossum-api/actions
