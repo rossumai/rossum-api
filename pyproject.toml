@@ -30,7 +30,7 @@ tests = [
   "pre-commit",
 ]
 docs = [
-  "sphinx>=8.2",  # python >= 3.11 is required for docs generation
+  "sphinx>=8.2,<9.0",
   "sphinx-rtd-theme",
   "sphinx-autodoc-typehints",
 ]
