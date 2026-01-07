@@ -1,6 +1,28 @@
 # CHANGELOG
 
 
+## v3.7.1 (2026-01-07)
+
+### Bug Fixes
+
+- Fix connector optional params
+  ([`e2c6bfd`](https://github.com/rossumai/rossum-api/commit/e2c6bfdfd0ea7145490762521b97d7fbe80f3691))
+
+- Make schema on Rule optional
+  ([`2bbf7b5`](https://github.com/rossumai/rossum-api/commit/2bbf7b58c3c6eb05ce7211b455754bf27ec53f3c))
+
+### Chores
+
+- Add a badge for supported python versions
+  ([`fcf1eac`](https://github.com/rossumai/rossum-api/commit/fcf1eacff74ff6fbe8fc1388b96d1e3e5d641a56))
+
+- Fix badges in README
+  ([`d865498`](https://github.com/rossumai/rossum-api/commit/d8654989c59c6799b9197e7a95fee258840936ca))
+
+- Pin sphinx<9.0
+  ([`bcf337f`](https://github.com/rossumai/rossum-api/commit/bcf337f5685be849b12e2eb6b70123e09ff2233e))
+
+
 ## v3.7.0 (2025-12-08)
 
 ### Bug Fixes
