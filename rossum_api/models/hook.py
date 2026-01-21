@@ -71,8 +71,8 @@ class Hook:
     -----
     Hooks are notified in parallel if ``run_after`` is not specified.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the hook.
     name

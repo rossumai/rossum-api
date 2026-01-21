@@ -11,8 +11,8 @@ class Connector:
     Connector is an extension of Rossum that allows to validate and modify data during validation
     and also export data to an external system.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the connector.
     name

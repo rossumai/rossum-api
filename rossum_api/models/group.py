@@ -9,8 +9,8 @@ class Group:
 
     Permissions are assigned to individual operations on objects.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Id of the user role (may differ between different organizations).
     name

@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 class Upload:
     """Represent an upload.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of upload object.
     url

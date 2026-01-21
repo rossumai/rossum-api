@@ -8,8 +8,8 @@ from typing import Any, Literal
 class EmailTemplate:
     """Email template represents templates one can choose from when sending an email from Rossum.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the email template.
     name

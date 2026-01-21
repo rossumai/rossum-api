@@ -10,8 +10,8 @@ class Organization:
     .. warning::
         Please note that Organization is an internal API and can be changed without notice.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the organization.
     name

@@ -11,8 +11,8 @@ class Queue:
     A queue defines the document processing workflow and connects documents
     to their extraction schema, processing inbox, and user groups.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Id of the queue.
     name

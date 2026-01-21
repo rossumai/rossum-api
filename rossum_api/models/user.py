@@ -10,8 +10,8 @@ class User:
     Every user is assigned to an organization and can have access to multiple
     queues and user groups for document processing workflows.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Id of the user.
     url

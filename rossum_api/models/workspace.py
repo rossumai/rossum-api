@@ -8,8 +8,8 @@ from typing import Any
 class Workspace:
     """Workspace is a container of `:class:`~rossum_api.models.queue.Queue`.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the workspace.
     name

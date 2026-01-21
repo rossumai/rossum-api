@@ -8,8 +8,8 @@ from typing import Any
 class Document:
     """Document contains information about one input file.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the document.
     url
