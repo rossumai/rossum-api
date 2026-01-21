@@ -72,6 +72,7 @@ from rossum_api.types import (
     UserType,
     WorkspaceType,
 )
+from rossum_api.utils import to_singular
 
 if TYPE_CHECKING:
     import pathlib
@@ -2006,18 +2007,24 @@ class AsyncRossumAPIClient(
     async def _sideload(self, resource: dict[str, Any], sideloads: Sequence[Sideload]) -> None:
         """Load sideloads manually.
 
-        The API does not support sideloading when fetching a single resource, we need to l
+        The API does not support sideloading when fetching a single resource, we need to load
+        it manually.
         """
-        sideload_tasks = [
-            asyncio.create_task(self._http_client.request_json("GET", resource[sideload]))
-            for sideload in sideloads
-        ]
+
+        async def fetch_sideload(sideload: Sideload) -> dict[str, Any] | None:
+            sideload_url = resource[to_singular(sideload)]
+            if sideload_url is not None:
+                return await self._http_client.request_json("GET", sideload_url)
+            return None
+
+        sideload_tasks = [asyncio.create_task(fetch_sideload(sideload)) for sideload in sideloads]
         sideloaded_jsons = await asyncio.gather(*sideload_tasks)
 
         for sideload, sideloaded_json in zip(sideloads, sideloaded_jsons):
-            if sideload == "content":  # Content (i.e. list of sections is wrapped in a dict)
+            if sideloaded_json is not None and sideload == "content":
+                # Content (i.e. list of sections is wrapped in a dict)
                 sideloaded_json = sideloaded_json["content"]
-            resource[sideload] = sideloaded_json
+            resource[to_singular(sideload)] = sideloaded_json
 
 
 # Type alias for an AsyncRossumAPIClient that uses the default deserializer

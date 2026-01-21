@@ -15,7 +15,7 @@ from rossum_api.domain_logic.sideloads import build_sideload_params, embed_sidel
 from rossum_api.domain_logic.urls import build_export_url, build_full_login_url, build_url
 from rossum_api.dtos import Token, UserCredentials
 from rossum_api.exceptions import APIClientError
-from rossum_api.utils import enforce_domain
+from rossum_api.utils import enforce_domain, to_singular
 
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
@@ -293,12 +293,11 @@ class InternalSyncClient:  # noqa: D101
         The API does not support sideloading when fetching a single resource, we need to load
         it manually.
         """
-        fetched_sideloads = []
         for sideload in sideloads:
-            sideload_url = resource[sideload]
-            fetched_sideloads.append(self.request_json("GET", url=sideload_url))
-
-        for sideload, fetched_sideload in zip(sideloads, fetched_sideloads):
-            if sideload == "content":  # Content (i.e. list of sections is wrapped in a dict)
-                fetched_sideload = fetched_sideload["content"]
-            resource[sideload] = fetched_sideload
+            sideload_url = resource[to_singular(sideload)]
+            if sideload_url is not None:
+                fetched = self.request_json("GET", url=sideload_url)
+                if sideload == "content":
+                    # Content (i.e. list of sections is wrapped in a dict)
+                    fetched = fetched["content"]
+                resource[to_singular(sideload)] = fetched

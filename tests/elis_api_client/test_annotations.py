@@ -36,7 +36,7 @@ def dummy_annotation():
         "metadata": {},
         "related_emails": [],
         "email": "https://elis.rossum.ai/api/v1/emails/96743",
-        "automation_blocker": None,
+        "automation_blocker": "https://api.elis.develop.r8.lol/v1/automation_blockers/6361661",
         "email_thread": "https://elis.rossum.ai/api/v1/email_threads/34567",
         "has_email_thread_with_replies": True,
         "has_email_thread_with_new_replies": False,
@@ -231,18 +231,58 @@ class TestAnnotations:
 
         http_client.fetch_one.assert_called_with(Resource.Annotation, aid)
 
-    async def test_retrieve_annotation_with_sideloads(self, elis_client, dummy_annotation):
+    async def test_retrieve_annotation_with_sideloads(
+        self, elis_client, dummy_annotation, dummy_annotation_with_sideloads
+    ):
         client, http_client = elis_client
         # Copy the annotation to prevent changing dummy_annotation by side effects
         http_client.fetch_one.return_value = dummy_annotation.copy()
-        http_client.request_json.return_value = {"content": []}
+
+        # Reuse automation_blocker structure from dummy_annotation_with_sideloads
+        automation_blocker_data = dummy_annotation_with_sideloads["automation_blocker"]
+
+        # Mock different responses for content and automation_blocker URLs
+        http_client.request_json.side_effect = [
+            {"content": []},  # Response for content URL
+            automation_blocker_data,  # Response for automation_blocker URL
+        ]
 
         aid = dummy_annotation["id"]
-        annotation = await client.retrieve_annotation(aid, sideloads=["content"])
+        annotation = await client.retrieve_annotation(
+            aid, sideloads=["content", "automation_blockers"]
+        )
 
-        assert annotation == Annotation(**{**dummy_annotation, "content": []})
+        # Build expected automation_blocker from the fixture data
+        expected_automation_blocker = AutomationBlocker(**automation_blocker_data)
+        expected_automation_blocker.content = [
+            AutomationBlockerContent(**content) for content in automation_blocker_data["content"]
+        ]
+
+        assert annotation == Annotation(
+            **{
+                **dummy_annotation,
+                "content": [],
+                "automation_blocker": expected_automation_blocker,
+            }
+        )
 
         http_client.fetch_one.assert_called_with(Resource.Annotation, aid)
+
+    async def test_retrieve_annotation_with_none_automation_blocker(
+        self, elis_client, dummy_annotation
+    ):
+        client, http_client = elis_client
+        annotation_with_none = {**dummy_annotation, "automation_blocker": None}
+        http_client.fetch_one.return_value = annotation_with_none.copy()
+
+        aid = dummy_annotation["id"]
+        annotation = await client.retrieve_annotation(aid, sideloads=["automation_blockers"])
+
+        assert annotation == Annotation(**annotation_with_none)
+        assert annotation.automation_blocker is None
+
+        http_client.fetch_one.assert_called_with(Resource.Annotation, aid)
+        http_client.request_json.assert_not_called()
 
     async def test_poll_annotation(self, elis_client, dummy_annotation):
         def is_imported(annotation):
@@ -489,6 +529,61 @@ class TestAnnotationsSync:
         assert annotation == Annotation(**dummy_annotation)
 
         http_client.fetch_resource.assert_called_with(Resource.Annotation, aid)
+
+    def test_retrieve_annotation_with_sideloads(
+        self, elis_client_sync, dummy_annotation, dummy_annotation_with_sideloads
+    ):
+        client, http_client = elis_client_sync
+
+        automation_blocker_data = dummy_annotation_with_sideloads["automation_blocker"]
+
+        annotation_with_sideloads = {
+            **dummy_annotation,
+            "content": [],
+            "automation_blocker": automation_blocker_data,
+        }
+        http_client.fetch_resource.return_value = annotation_with_sideloads.copy()
+
+        def mock_sideload(resource, sideloads):
+            resource["content"] = []
+            resource["automation_blocker"] = automation_blocker_data
+
+        http_client.sideload.side_effect = mock_sideload
+
+        aid = dummy_annotation["id"]
+        annotation = client.retrieve_annotation(aid, sideloads=["content", "automation_blockers"])
+
+        expected_automation_blocker = AutomationBlocker(**automation_blocker_data)
+        expected_automation_blocker.content = [
+            AutomationBlockerContent(**content) for content in automation_blocker_data["content"]
+        ]
+
+        assert annotation == Annotation(
+            **{
+                **dummy_annotation,
+                "content": [],
+                "automation_blocker": expected_automation_blocker,
+            }
+        )
+
+        http_client.fetch_resource.assert_called_with(Resource.Annotation, aid)
+        http_client.sideload.assert_called_once()
+
+    def test_retrieve_annotation_with_none_automation_blocker(
+        self, elis_client_sync, dummy_annotation
+    ):
+        client, http_client = elis_client_sync
+        annotation_with_none = {**dummy_annotation, "automation_blocker": None}
+        http_client.fetch_resource.return_value = annotation_with_none.copy()
+
+        aid = dummy_annotation["id"]
+        annotation = client.retrieve_annotation(aid, sideloads=["automation_blockers"])
+
+        assert annotation == Annotation(**annotation_with_none)
+        assert annotation.automation_blocker is None
+
+        http_client.fetch_resource.assert_called_with(Resource.Annotation, aid)
+        http_client.request_json.assert_not_called()
 
     def test_poll_annotation(self, elis_client_sync, dummy_annotation):
         def is_imported(annotation):
