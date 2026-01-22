@@ -150,8 +150,7 @@ class Hook:
     queues: list[str] = field(default_factory=list)
     run_after: list[str] = field(default_factory=list)
     events: list[HookEventAndAction] = field(default_factory=list)
-    settings: JsonDict = field(default_factory=dict)
-    settings_schema: JsonDict | None = None
+    settings: JsonDict | None = field(default_factory=dict)
     secrets: JsonDict = field(default_factory=dict)
     extension_source: HookExtensionSource = "custom"
     sideload: list[str] = field(default_factory=list)
