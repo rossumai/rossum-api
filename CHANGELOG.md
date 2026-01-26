@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v3.7.2 (2026-01-26)
+
+### Bug Fixes
+
+- Make sideload compatible with latest api
+  ([`5c7ee62`](https://github.com/rossumai/rossum-api/commit/5c7ee62bb265b50ca110b0f071fb0329351a8363))
+
+### Chores
+
+- Add classifiers
+  ([`2316aeb`](https://github.com/rossumai/rossum-api/commit/2316aeb3ff6aa49152881e46b9ca089e6de90eaf))
+
+- Run tests against python 3.14
+  ([`ae15a9a`](https://github.com/rossumai/rossum-api/commit/ae15a9a6498568e37c25b8adae9f20c821d2e488))
+
+
 ## v3.7.1 (2026-01-07)
 
 ### Bug Fixes
