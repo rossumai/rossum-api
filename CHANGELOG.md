@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v3.8.0 (2026-01-27)
+
+### Chores
+
+- Add missing job hook type to type hints and docs
+  ([`fef5b5b`](https://github.com/rossumai/rossum-api/commit/fef5b5bcfadf58451ff405756788be12f1cf938b))
+
+- Fix correctly Attributes in dataclass docs
+  ([`f30785f`](https://github.com/rossumai/rossum-api/commit/f30785f13ad9aa75a13e3a59959ce552b76b2a00))
+
+### Features
+
+- Add Hook Run Data for listing hook execution logs
+  ([`3a9efb9`](https://github.com/rossumai/rossum-api/commit/3a9efb9cd31c51ec2ec13e4dbd02bc4776de34b7))
+
+
 ## v3.7.2 (2026-01-26)
 
 ### Bug Fixes
