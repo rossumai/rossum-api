@@ -8,8 +8,8 @@ from typing import Any
 class RuleAction:
     """Rule action object defines actions to be executed when trigger condition is met.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Rule action ID. Needs to be unique within the Rule's actions.
     enabled
@@ -60,8 +60,8 @@ class Rule:
 
     In line item mode, the condition is evaluated once for each row of the table.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Rule object ID.
     url

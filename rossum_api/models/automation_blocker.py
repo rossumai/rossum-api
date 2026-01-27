@@ -22,8 +22,8 @@ AutomationBlockerTypes = Literal[
 class AutomationBlockerContent:
     """Description of a single reason why `Annotation` was not automated.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     level
         Whether automation blocker relates to specific datapoint or to the whole
         :class:`~rossum_api.models.annotation.Annotation`.
@@ -57,8 +57,8 @@ class AutomationBlockerContent:
 class AutomationBlocker:
     """Automation blocker stores reason why `Annotation` was not automated.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Automation blocker object ID.
     url

@@ -11,8 +11,8 @@ class Inbox:
     We enforce email domain to match Rossum domain (e.g. .rossum.app). email_prefix may be
     used to construct unique email address.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the inbox.
     name

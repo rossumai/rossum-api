@@ -34,8 +34,8 @@ class Relation:
     An :class:`~rossum_api.models.annotation.Annotation` can be related to one or more
     other annotations and it may belong to several relations at the same time.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the relation.
     type

@@ -39,8 +39,8 @@ class Node(ABC, Generic[ParentType]):
 class Datapoint(Node["Multivalue | Section | Tuple"]):
     """A datapoint represents a single value, typically a field of a document or global document information.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Unique identifier for the datapoint.
     type
@@ -137,8 +137,8 @@ class Datapoint(Node["Multivalue | Section | Tuple"]):
     def traverse(self, ignore_buttons: bool = True) -> Iterator[Datapoint]:
         """Iterate over self and all sub-nodes.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
         """
@@ -160,8 +160,8 @@ class Multivalue(Node["Section"]):
     Represents a container for data with multiple occurrences (such as line items)
     and can contain only objects with the same id.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Unique identifier for the multivalue.
     children
@@ -206,8 +206,8 @@ class Multivalue(Node["Section"]):
     def traverse(self, ignore_buttons: bool = True) -> Iterator[Multivalue | Datapoint | Tuple]:
         """Iterate over self and all sub-nodes.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
         """
@@ -242,8 +242,8 @@ class Tuple(Node["Multivalue"]):
     A tuple must be nested within a multivalue object, but unlike multivalue,
     it may consist of objects with different ids.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Unique identifier for the tuple.
     children
@@ -279,8 +279,8 @@ class Tuple(Node["Multivalue"]):
     def traverse(self, ignore_buttons: bool = True) -> Iterator[Tuple | Datapoint]:
         """Iterate over self and all sub-nodes.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
         """
@@ -304,8 +304,8 @@ class Tuple(Node["Multivalue"]):
 class Section(Node["Schema"]):
     """Top-level container grouping related datapoints, multivalues, and tuples.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         Unique identifier for the section.
     children
@@ -333,8 +333,8 @@ class Section(Node["Schema"]):
     def traverse(self, ignore_buttons: bool = True) -> Iterator[Datapoint | Multivalue | Tuple]:
         """Iterate over all sub-nodes.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
         """
@@ -374,8 +374,8 @@ class Schema(Node):
 
     For more information see `Document Schema <https://elis.rossum.ai/api/docs/#document-schema>`_.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the schema.
     name
@@ -409,8 +409,8 @@ class Schema(Node):
     def traverse(self, ignore_buttons: bool = True) -> Iterator[Datapoint | Multivalue | Tuple]:
         """Iterater over all sub-nodes.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
         """
@@ -422,8 +422,8 @@ class Schema(Node):
     ) -> Section | Multivalue | Tuple | Datapoint | None:
         """Find a node by its ID.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         node_id
             ID of the node to find.
         ignore_buttons
@@ -441,8 +441,8 @@ class Schema(Node):
     def formula_fields(self, ignore_buttons: bool = True) -> Iterator[Datapoint]:
         """Iterate over all formula datapoints.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
 
@@ -457,8 +457,8 @@ class Schema(Node):
     def reasoning_fields(self, ignore_buttons: bool = True) -> Iterator[Datapoint]:
         """Iterate over all reasoning datapoints.
 
-        Arguments
-        ---------
+        Attributes
+        ----------
         ignore_buttons
             If True, button datapoints are excluded from traversal.
 

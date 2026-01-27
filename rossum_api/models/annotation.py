@@ -24,8 +24,8 @@ class Annotation:
     to the :class:`~rossum_api.models.schema.Schema`, that defines datapoint types and overall shape
     of the extracted data.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     url
         URL of the annotation object.
     status

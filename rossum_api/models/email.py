@@ -23,8 +23,8 @@ class EmailType(str, Enum):  # noqa: D101
 class Email:
     """Email represents emails sent to Rossum inboxes.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the email.
     url

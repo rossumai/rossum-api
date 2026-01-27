@@ -14,8 +14,8 @@ class Engine:
     An engine defines the AI model and configuration used for document
     processing and field extraction in Rossum queues.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the engine.
     url
@@ -59,8 +59,8 @@ class EngineField:
     An engine field defines the structure and configuration of a specific
     data field that the AI engine can extract from documents.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the engine field.
     url

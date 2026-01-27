@@ -24,8 +24,8 @@ class DocumentRelation:
     :class:`~rossum_api.models.annotation.Annotation` and the :class:`~rossum_api.models.document.Document`
     from which it was created.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of the document relation.
     type

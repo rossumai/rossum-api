@@ -29,8 +29,8 @@ class Task:
         Please note that task object and all endpoints associated with it are in beta version
         right now. The API may change in the future.
 
-    Arguments
-    ---------
+    Attributes
+    ----------
     id
         ID of task object.
     url
