@@ -105,8 +105,6 @@ class Hook:
     settings
         Specific settings that will be included in the payload when executing the hook.
         Field is validated with json schema stored in ``settings_schema`` field.
-    settings_schema
-        [BETA] JSON schema for settings field validation.
     secrets
         JSON schema for ``settings`` field validation.
         This is in **BETA**.
