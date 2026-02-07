@@ -40,6 +40,7 @@ from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
+from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.queue import Queue
 from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
@@ -61,6 +62,7 @@ from rossum_api.types import (
     HookRunDataType,
     HookType,
     InboxType,
+    OrganizationGroupType,
     OrganizationType,
     QueueType,
     RelationType,
@@ -86,6 +88,7 @@ if TYPE_CHECKING:
         DocumentRelationOrdering,
         EmailTemplateOrdering,
         HookOrdering,
+        OrganizationGroupOrdering,
         OrganizationOrdering,
         QueueOrdering,
         RelationOrdering,
@@ -114,6 +117,7 @@ class SyncRossumAPIClient(
         HookRunDataType,
         InboxType,
         EmailType,
+        OrganizationGroupType,
         OrganizationType,
         QueueType,
         RelationType,
@@ -519,6 +523,46 @@ class SyncRossumAPIClient(
             stacklevel=2,  # point to the users' code
         )
         return self.retrieve_own_organization()
+
+    # ##### ORGANIZATION GROUPS #####
+
+    def list_organization_groups(
+        self, ordering: Sequence[OrganizationGroupOrdering] = (), **filters: Any
+    ) -> Iterator[OrganizationGroupType]:
+        """Retrieve all organization group objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their IDs are used for sorting the results
+        filters
+            id: ID of a :class:`~rossum_api.models.organization_group.OrganizationGroup`
+
+            name: Name of a :class:`~rossum_api.models.organization_group.OrganizationGroup`
+
+        References
+        ----------
+        https://rossum.app/api/docs/#tag/Organization-Group/operation/organization_groups_list.
+        """
+        for og in self.internal_client.fetch_resources(
+            Resource.OrganizationGroup, ordering, **filters
+        ):
+            yield self._deserializer(Resource.OrganizationGroup, og)
+
+    def retrieve_organization_group(self, org_group_id: int) -> OrganizationGroupType:
+        """Retrieve a single :class:`~rossum_api.models.organization_group.OrganizationGroup` object.
+
+        Parameters
+        ----------
+        org_group_id
+            ID of an organization group to be retrieved.
+
+        References
+        ----------
+        https://rossum.app/api/docs/#tag/Organization-Group/operation/organization_groups_retrieve.
+        """
+        org_group = self.internal_client.fetch_resource(Resource.OrganizationGroup, org_group_id)
+        return self._deserializer(Resource.OrganizationGroup, org_group)
 
     # ##### SCHEMAS #####
 
@@ -1994,6 +2038,7 @@ SyncRossumAPIClientWithDefaultDeserializer = SyncRossumAPIClient[
     HookRunData,
     Inbox,
     Email,
+    OrganizationGroup,
     Organization,
     Queue,
     Relation,

@@ -23,6 +23,7 @@ class Resource(Enum):
     Inbox = "inboxes"
     Email = "emails"
     Organization = "organizations"
+    OrganizationGroup = "organization_groups"
     Queue = "queues"
     Relation = "relations"
     Rule = "rules"
