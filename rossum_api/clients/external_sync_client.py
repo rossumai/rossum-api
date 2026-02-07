@@ -4,6 +4,8 @@ import time
 import warnings
 from typing import TYPE_CHECKING, Generic, cast
 
+import dacite
+
 from rossum_api.clients.internal_sync_client import InternalSyncClient
 from rossum_api.domain_logic.annotations import (
     ExportFileFormats,
@@ -18,6 +20,7 @@ from rossum_api.domain_logic.tasks import is_task_succeeded
 from rossum_api.domain_logic.upload import build_upload_files
 from rossum_api.domain_logic.urls import (
     EMAIL_IMPORT_URL,
+    build_organization_limits_url,
     build_resource_cancel_url,
     build_resource_confirm_url,
     build_resource_content_operations_url,
@@ -28,7 +31,7 @@ from rossum_api.domain_logic.urls import (
     build_upload_url,
     parse_resource_id_from_url,
 )
-from rossum_api.models import deserialize_default
+from rossum_api.models import DACITE_CONFIG, deserialize_default
 from rossum_api.models.annotation import Annotation
 from rossum_api.models.connector import Connector
 from rossum_api.models.document import Document
@@ -41,6 +44,7 @@ from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
+from rossum_api.models.organization_limit import OrganizationLimit
 from rossum_api.models.queue import Queue
 from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
@@ -523,6 +527,25 @@ class SyncRossumAPIClient(
             stacklevel=2,  # point to the users' code
         )
         return self.retrieve_own_organization()
+
+    def retrieve_organization_limit(self, org_id: int) -> OrganizationLimit:
+        """Retrieve limits for a given organization.
+
+        Parameters
+        ----------
+        org_id
+            ID of an organization whose limits are to be retrieved.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#organization-limits.
+        """
+        url = build_organization_limits_url(org_id)
+        response = self.internal_client.request_json("GET", url)
+        result: OrganizationLimit = dacite.from_dict(
+            OrganizationLimit, response, config=DACITE_CONFIG
+        )
+        return result
 
     # ##### ORGANIZATION GROUPS #####
 

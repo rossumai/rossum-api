@@ -76,6 +76,9 @@ def _convert_key(key: str) -> str:
     return key
 
 
+DACITE_CONFIG = dacite.Config(cast=[Enum], convert_key=_convert_key)
+
+
 def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
     """Deserialize payload into dataclasses using dacite.
 

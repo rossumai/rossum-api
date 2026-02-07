@@ -6,6 +6,7 @@ import warnings
 from typing import TYPE_CHECKING, Generic, cast
 
 import aiofiles
+import dacite
 
 from rossum_api.clients.internal_async_client import InternalAsyncClient
 from rossum_api.domain_logic.annotations import (
@@ -20,6 +21,7 @@ from rossum_api.domain_logic.search import build_search_params, validate_search_
 from rossum_api.domain_logic.tasks import is_task_succeeded
 from rossum_api.domain_logic.urls import (
     EMAIL_IMPORT_URL,
+    build_organization_limits_url,
     build_resource_cancel_url,
     build_resource_confirm_url,
     build_resource_content_operations_url,
@@ -30,7 +32,7 @@ from rossum_api.domain_logic.urls import (
     parse_resource_id_from_url,
 )
 from rossum_api.dtos import Token, UserCredentials
-from rossum_api.models import deserialize_default
+from rossum_api.models import DACITE_CONFIG, deserialize_default
 from rossum_api.models.annotation import Annotation
 from rossum_api.models.connector import Connector
 from rossum_api.models.document import Document
@@ -43,6 +45,7 @@ from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
+from rossum_api.models.organization_limit import OrganizationLimit
 from rossum_api.models.queue import Queue
 from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
@@ -578,6 +581,25 @@ class AsyncRossumAPIClient(
         user: dict[Any, Any] = await self._http_client.fetch_one(Resource.Auth, "user")
         organization_id = parse_resource_id_from_url(user["organization"])
         return await self.retrieve_organization(organization_id)
+
+    async def retrieve_organization_limit(self, org_id: int) -> OrganizationLimit:
+        """Retrieve limits for a given organization.
+
+        Parameters
+        ----------
+        org_id
+            ID of an organization whose limits are to be retrieved.
+
+        References
+        ----------
+        https://elis.rossum.ai/api/docs/#organization-limits.
+        """
+        url = build_organization_limits_url(org_id)
+        response = await self._http_client.request_json("GET", url)
+        result: OrganizationLimit = dacite.from_dict(
+            OrganizationLimit, response, config=DACITE_CONFIG
+        )
+        return result
 
     # ##### ORGANIZATION GROUPS #####
     async def list_organization_groups(
