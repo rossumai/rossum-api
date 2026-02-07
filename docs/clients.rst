@@ -534,4 +534,4 @@ See Also
 --------
 
 * :doc:`models` - Data models returned by the clients
-* `Rossum API Documentation <https://elis.rossum.ai/api/docs>`_ - Official API reference
+* `Rossum API Documentation <https://rossum.app/api/docs>`_ - Official API reference

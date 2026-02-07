@@ -32,7 +32,7 @@ class EmailTemplate:
         True if user wants to send email automatically on the action, see ``type``.
     triggers
         URLs of the linked triggers.
-        Read more about `triggers <https://elis.rossum.ai/api/docs/#using-triggers>`_.
+        Read more about `triggers <https://rossum.app/api/docs/#tag/Using-Triggers>`_.
     to
         List that contains information about recipients.
     cc
@@ -42,9 +42,9 @@ class EmailTemplate:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#email-template.
+    https://rossum.app/api/docs/#tag/Email-Template
 
-    https://elis.rossum.ai/api/docs/#using-triggers.
+    https://rossum.app/api/docs/#tag/Using-Triggers
     """
 
     id: int

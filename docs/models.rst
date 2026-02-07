@@ -281,4 +281,4 @@ See Also
 --------
 
 * :doc:`clients` - API clients that return these models
-* `Rossum API Documentation <https://elis.rossum.ai/api/docs>`_ - Detailed field descriptions
+* `Rossum API Documentation <https://rossum.app/api/docs>`_ - Detailed field descriptions

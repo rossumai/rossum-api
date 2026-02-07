@@ -41,7 +41,7 @@ class Connector:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#connector
+    https://rossum.app/api/docs/#tag/Connector
     """
 
     id: int

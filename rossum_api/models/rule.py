@@ -15,18 +15,18 @@ class RuleAction:
     enabled
         If False the action is disabled (default: True).
     type
-        Type of action. See `Rule actions <https://elis.rossum.ai/api/docs/#rule-actions>`_
+        Type of action. See `Rule actions <https://rossum.app/api/docs/#rule-actions>`_
         for the list of possible actions.
     payload
         Action payload. Structure depends on the action type.
-        See `Rule actions <https://elis.rossum.ai/api/docs/#rule-actions>`_ for details.
+        See `Rule actions <https://rossum.app/api/docs/#rule-actions>`_ for details.
     event
         Actions are configured to be executed on a specific event.
-        See `Trigger events <https://elis.rossum.ai/api/docs/#trigger-events>`_.
+        See `Trigger events <https://rossum.app/api/docs/#tag/Using-Triggers/Trigger-Event-Types>`_.
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#rule-actions
+    https://rossum.app/api/docs/#rule-actions
     """
 
     id: str
@@ -76,7 +76,7 @@ class Rule:
         URL of the :class:`~rossum_api.models.schema.Schema` the rule belongs to.
     trigger_condition
         A condition for triggering the rule's actions.
-        This is a formula evaluated by `Rossum TxScript <https://elis.rossum.ai/api/docs/#rossum-transaction-scripts>`_.
+        This is a formula evaluated by `Rossum TxScript <https://rossum.app/api/docs/#tag/Rossum-Transaction-Scripts>`_.
         Note that trigger condition must evaluate strictly to ``"True"``,
         truthy values are not enough to trigger the execution of actions.
         Wrap your condition with ``bool(your_condition)`` if necessary.
@@ -94,11 +94,11 @@ class Rule:
         Signals whether the rule is automatically updated from the linked template.
     actions
         List of :class:`~rossum_api.models.rule.RuleAction` objects.
-        See `Rule actions <https://elis.rossum.ai/api/docs/#rule-actions>`_.
+        See `Rule actions <https://rossum.app/api/docs/#rule-actions>`_.
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#rule
+    https://rossum.app/api/docs/#tag/Rule
     """
 
     id: int

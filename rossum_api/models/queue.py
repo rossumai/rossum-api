@@ -81,7 +81,7 @@ class Queue:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#queue.
+    https://rossum.app/api/docs/#tag/Queue
     """
 
     id: int

@@ -85,7 +85,7 @@ The **rossum-api** library can be used to communicate with Rossum API, instead o
 * it takes care of authenticating the user,
 * it includes many methods for common actions that you don't need to write by yourself from scratch,
 * it returns the result as a Python first-class object (dataclass), so you don't need to parse the JSON by yourself,
-* it maps method naming as close as possible to `API docs <https://elis.rossum.ai/api/docs>`_,
+* it maps method naming as close as possible to `API docs <https://rossum.app/api/docs>`_,
 * in case the API version changes, the change will be implemented in the library by the Rossum team for all users.
 * it has minimal dependencies
 

@@ -87,7 +87,7 @@ class Email:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#email
+    https://rossum.app/api/docs/#tag/Email
     """
 
     id: int

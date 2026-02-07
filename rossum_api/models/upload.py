@@ -33,7 +33,7 @@ class Upload:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#upload.
+    https://rossum.app/api/docs/#tag/Upload
     """
 
     id: int

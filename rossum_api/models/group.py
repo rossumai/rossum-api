@@ -20,7 +20,7 @@ class Group:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#user-role
+    https://rossum.app/api/docs/#tag/User-Role
     """
 
     id: int
