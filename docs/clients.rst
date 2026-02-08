@@ -5,10 +5,6 @@ The Rossum API SDK provides both synchronous and asynchronous clients for intera
 with the Rossum API. Both clients offer identical functionality, so choose the one
 that best fits your application architecture.
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 2
-
 Overview
 --------
 

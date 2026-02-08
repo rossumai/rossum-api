@@ -5,10 +5,6 @@ The Rossum API SDK provides type-safe dataclass models for all API resources.
 These models are automatically populated from API responses and provide
 clear type hints for all fields.
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 1
-
 Overview
 --------
 
