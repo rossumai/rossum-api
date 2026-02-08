@@ -92,6 +92,7 @@ def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
     if resource == Resource.Schema:
         return Schema.from_dict(payload)
 
-    return dacite.from_dict(
-        model_class, payload, config=dacite.Config(cast=[Enum], convert_key=_convert_key)
-    )
+    if resource == Resource.Rule:
+        return Rule.from_dict(payload)
+
+    return dacite.from_dict(model_class, payload, config=DACITE_CONFIG)
