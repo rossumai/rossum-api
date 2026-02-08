@@ -42,6 +42,7 @@ from rossum_api.models.email_template import EmailTemplate
 from rossum_api.models.engine import Engine, EngineField
 from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
+from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
@@ -65,6 +66,7 @@ from rossum_api.types import (
     EngineType,
     GroupType,
     HookRunDataType,
+    HookTemplateType,
     HookType,
     InboxType,
     OrganizationGroupType,
@@ -117,8 +119,9 @@ class AsyncRossumAPIClient(
         EngineType,
         EngineFieldType,
         GroupType,
-        HookRunDataType,
         HookType,
+        HookRunDataType,
+        HookTemplateType,
         InboxType,
         EmailType,
         OrganizationGroupType,
@@ -1973,6 +1976,49 @@ class AsyncRossumAPIClient(
         async for d in self._http_client.fetch_all(Resource.HookRunData, **filters):
             yield self._deserializer(Resource.HookRunData, d)
 
+    # ##### HOOK TEMPLATES #####
+    async def list_hook_templates(self, **filters: Any) -> AsyncIterator[HookTemplateType]:
+        """Retrieve all :class:`~rossum_api.models.hook_template.HookTemplate` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        filters
+            id: ID of a :class:`~rossum_api.models.hook_template.HookTemplate`
+
+            name: Name of a :class:`~rossum_api.models.hook_template.HookTemplate`
+
+            type: Hook template type. Possible values: ``"webhook"``, ``"function"``
+
+            extension_source: Import source of the extension.
+            Possible values: ``"custom"``, ``"rossum_store"``
+
+        References
+        ----------
+        https://rossum.app/api/docs/#operation/hook_templates_list
+
+        https://rossum.app/api/docs/#tag/Hook-Template
+        """
+        async for ht in self._http_client.fetch_all(Resource.HookTemplate, **filters):
+            yield self._deserializer(Resource.HookTemplate, ht)
+
+    async def retrieve_hook_template(self, hook_template_id: int) -> HookTemplateType:
+        """Retrieve a single :class:`~rossum_api.models.hook_template.HookTemplate` object.
+
+        Parameters
+        ----------
+        hook_template_id
+            ID of a hook template to be retrieved.
+
+        References
+        ----------
+        https://rossum.app/api/docs/#operation/hook_templates_retrieve
+
+        https://rossum.app/api/docs/#tag/Hook-Template
+        """
+        hook_template = await self._http_client.fetch_one(Resource.HookTemplate, hook_template_id)
+
+        return self._deserializer(Resource.HookTemplate, hook_template)
+
     # ##### RULES #####
     async def list_rules(
         self, ordering: Sequence[RuleOrdering] = (), **filters: Any
@@ -2157,6 +2203,7 @@ AsyncRossumAPIClientWithDefaultDeserializer = AsyncRossumAPIClient[
     Group,
     Hook,
     HookRunData,
+    HookTemplate,
     Inbox,
     Email,
     OrganizationGroup,
