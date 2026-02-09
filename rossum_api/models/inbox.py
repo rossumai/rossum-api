@@ -30,20 +30,20 @@ class Inbox:
         Maximum length allowed is 57 chars.
     bounce_email_to
         (Deprecated) Email address to send notifications to (e.g. about failed import).
-        Configuration moved to `Email notifications settings <https://elis.rossum.ai/api/docs/#email-notification-settings>`_.
+        Configuration moved to `Email notifications settings <https://rossum.app/api/docs/#tag/Inbox>`_.
     bounce_unprocessable_attachments
         (Deprecated) Whether return back unprocessable attachments (e.g. MS Word docx)
         or just silently ignore them. When true, minimum image size requirement does not apply.
-        Configuration moved to `Email notifications settings <https://elis.rossum.ai/api/docs/#email-notification-settings>`_.
+        Configuration moved to `Email notifications settings <https://rossum.app/api/docs/#tag/Inbox>`_.
     bounce_postponed_annotations
         (Deprecated) Whether to send notification when annotation is postponed.
-        Configuration moved to `Email notifications settings <https://elis.rossum.ai/api/docs/#email-notification-settings>`_.
+        Configuration moved to `Email notifications settings <https://rossum.app/api/docs/#tag/Inbox>`_.
     bounce_deleted_annotations
         (Deprecated) Whether to send notification when annotation is deleted.
-        Configuration moved to `Email notifications settings <https://elis.rossum.ai/api/docs/#email-notification-settings>`_.
+        Configuration moved to `Email notifications settings <https://rossum.app/api/docs/#tag/Inbox>`_.
     bounce_email_with_no_attachments
         (Deprecated) Whether to send notification when no processable documents were found.
-        Configuration moved to `Email notifications settings <https://elis.rossum.ai/api/docs/#email-notification-settings>`_.
+        Configuration moved to `Email notifications settings <https://rossum.app/api/docs/#tag/Inbox>`_.
     metadata
         Client data.
     filters
@@ -52,9 +52,9 @@ class Inbox:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#inbox
+    https://rossum.app/api/docs/#tag/Inbox
 
-    https://elis.rossum.ai/api/docs/#email-notification-settings
+    https://rossum.app/api/docs/#tag/Inbox
     """
 
     id: int

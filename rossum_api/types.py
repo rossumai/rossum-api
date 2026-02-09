@@ -12,7 +12,7 @@ JsonDict = dict[str, Any]
 HttpMethod = Literal["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
 
 # Sideloads allow fetching related resources in a single request.
-# See https://elis.rossum.ai/api/docs/#webhook-events for more information.
+# See https://rossum.app/api/docs/#tag/Hook for more information.
 Sideload = Literal["content", "automation_blockers", "documents", "modifiers", "queues"]
 
 # Super type for use with deserialize_default
@@ -29,9 +29,11 @@ EngineFieldType = typing.TypeVar("EngineFieldType")
 GroupType = typing.TypeVar("GroupType")
 HookType = typing.TypeVar("HookType")
 HookRunDataType = typing.TypeVar("HookRunDataType")
+HookTemplateType = typing.TypeVar("HookTemplateType")
 InboxType = typing.TypeVar("InboxType")
 EmailType = typing.TypeVar("EmailType")
 OrganizationType = typing.TypeVar("OrganizationType")
+OrganizationGroupType = typing.TypeVar("OrganizationGroupType")
 QueueType = typing.TypeVar("QueueType")
 RelationType = typing.TypeVar("RelationType")
 RuleType = typing.TypeVar("RuleType")

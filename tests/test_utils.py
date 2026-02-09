@@ -10,7 +10,7 @@ class TestToSingular:
         "plural,singular",
         [
             # All defined sideload values from rossum_api.types.Sideload
-            # See: https://elis.rossum.ai/api/docs/#webhook-events
+            # See: https://rossum.app/api/docs/#webhook-events
             ("content", "content"),  # Already singular
             ("automation_blockers", "automation_blocker"),
             ("documents", "document"),

@@ -42,7 +42,7 @@ class AutomationBlockerContent:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#automation-blocker.
+    https://rossum.app/api/docs/#tag/Automation-Blocker
     """
 
     level: str
@@ -70,7 +70,7 @@ class AutomationBlocker:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#automation-blocker.
+    https://rossum.app/api/docs/#tag/Automation-Blocker
     """
 
     id: int

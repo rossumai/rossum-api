@@ -45,7 +45,7 @@ class DocumentRelation:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#document-relation
+    https://rossum.app/api/docs/#tag/Document-Relation
     """
 
     id: int

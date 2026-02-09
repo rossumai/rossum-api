@@ -5,10 +5,6 @@ The Rossum API SDK provides both synchronous and asynchronous clients for intera
 with the Rossum API. Both clients offer identical functionality, so choose the one
 that best fits your application architecture.
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 2
-
 Overview
 --------
 
@@ -534,4 +530,4 @@ See Also
 --------
 
 * :doc:`models` - Data models returned by the clients
-* `Rossum API Documentation <https://elis.rossum.ai/api/docs>`_ - Official API reference
+* `Rossum API Documentation <https://rossum.app/api/docs>`_ - Official API reference

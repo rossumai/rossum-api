@@ -1,9 +1,20 @@
 from __future__ import annotations
 
+import dacite
 import pytest
 
 from rossum_api.domain_logic.resources import Resource
-from rossum_api.models.rule import Rule, RuleAction
+from rossum_api.models.rule import (
+    AddAutomationBlockerPayload,
+    AddValidationSourcePayload,
+    ChangeQueuePayload,
+    ChangeStatusPayload,
+    LabelsPayload,
+    Rule,
+    SchemaIdsPayload,
+    SendEmailPayload,
+    ShowMessagePayload,
+)
 
 
 @pytest.fixture
@@ -49,19 +60,13 @@ def dummy_rule_without_schema(dummy_rule):
 @pytest.fixture
 def expected_rule(dummy_rule):
     """Creates a Rule object with properly constructed RuleAction objects."""
-    rule_data = dummy_rule.copy()
-    rule_data["actions"] = [RuleAction(**action) for action in dummy_rule["actions"]]
-    return Rule(**rule_data)
+    return Rule.from_dict(dummy_rule)
 
 
 @pytest.fixture
 def expected_rule_without_schema(dummy_rule_without_schema):
     """Creates a Rule object without schema."""
-    rule_data = dummy_rule_without_schema.copy()
-    rule_data["actions"] = [
-        RuleAction(**action) for action in dummy_rule_without_schema["actions"]
-    ]
-    return Rule(**rule_data)
+    return Rule.from_dict(dummy_rule_without_schema)
 
 
 @pytest.mark.asyncio
@@ -251,3 +256,104 @@ class TestRulesSync:
         assert rule.schema is None
 
         http_client.fetch_resource.assert_called_with(Resource.Rule, uid)
+
+
+class TestRuleActionDeserialization:
+    """Tests that Rule.from_dict correctly deserializes all action payload types."""
+
+    def _make_rule_dict(self, action_type: str, payload: dict) -> dict:
+        return {
+            "id": 1,
+            "name": "test",
+            "enabled": True,
+            "organization": "https://elis.rossum.ai/api/v1/organizations/1",
+            "actions": [
+                {
+                    "id": "action-1",
+                    "type": action_type,
+                    "payload": payload,
+                    "event": "validation",
+                }
+            ],
+        }
+
+    @pytest.mark.parametrize(
+        "action_type, payload_data, expected_cls",
+        [
+            (
+                "show_message",
+                {"type": "error", "content": "msg", "schema_id": "field_1"},
+                ShowMessagePayload,
+            ),
+            (
+                "add_automation_blocker",
+                {"content": "blocked", "schema_id": "f1"},
+                AddAutomationBlockerPayload,
+            ),
+            ("change_status", {"method": "postpone"}, ChangeStatusPayload),
+            ("change_queue", {"queue_id": 42, "reimport": True}, ChangeQueuePayload),
+            ("add_label", {"labels": ["lbl1"]}, LabelsPayload),
+            ("remove_label", {"labels": ["lbl1"]}, LabelsPayload),
+            ("add_remove_label", {"labels": ["lbl1"]}, LabelsPayload),
+            ("show_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
+            ("hide_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
+            ("show_hide_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
+            ("add_validation_source", {"schema_id": "field_1"}, AddValidationSourcePayload),
+            (
+                "send_email",
+                {
+                    "email_template": "https://example.com/templates/1",
+                    "attach_document": True,
+                    "to": ["a@b.com"],
+                },
+                SendEmailPayload,
+            ),
+        ],
+    )
+    def test_payload_deserialization(self, action_type, payload_data, expected_cls):
+        data = self._make_rule_dict(action_type, payload_data)
+        rule = Rule.from_dict(data)
+        assert isinstance(rule.actions[0].payload, expected_cls)
+
+    def test_custom_payload_stays_as_dict(self):
+        data = self._make_rule_dict("custom", {"foo": "bar", "nested": {"a": 1}})
+        rule = Rule.from_dict(data)
+        payload = rule.actions[0].payload
+        assert isinstance(payload, dict)
+        assert payload == {"foo": "bar", "nested": {"a": 1}}
+
+    def test_unknown_action_type_raises(self):
+        data = self._make_rule_dict("some_future_type", {"key": "val"})
+        with pytest.raises(KeyError):
+            Rule.from_dict(data)
+
+    def test_payload_with_missing_required_field_raises(self):
+        data = self._make_rule_dict("change_queue", {"reimport": True})
+        with pytest.raises(dacite.MissingValueError):
+            Rule.from_dict(data)
+
+    def test_multiple_actions(self):
+        data = {
+            "id": 1,
+            "name": "multi",
+            "enabled": True,
+            "organization": "https://elis.rossum.ai/api/v1/organizations/1",
+            "actions": [
+                {
+                    "id": "a1",
+                    "type": "show_message",
+                    "payload": {"type": "error", "content": "msg"},
+                    "event": "validation",
+                },
+                {
+                    "id": "a2",
+                    "type": "change_status",
+                    "payload": {"method": "postpone"},
+                    "event": "validation",
+                },
+            ],
+        }
+        rule = Rule.from_dict(data)
+        assert len(rule.actions) == 2
+        assert isinstance(rule.actions[0].payload, ShowMessagePayload)
+        assert isinstance(rule.actions[1].payload, ChangeStatusPayload)

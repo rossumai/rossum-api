@@ -88,9 +88,7 @@ class Datapoint(Node["Multivalue | Section | Tuple"]):
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#datapoin.
-
-    https://elis.rossum.ai/api/docs/#document-schema.
+    https://rossum.app/api/docs/#tag/Document-Schema
     """
 
     id: str
@@ -187,9 +185,7 @@ class Multivalue(Node["Section"]):
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#multivalue.
-
-    https://elis.rossum.ai/api/docs/#document-schema.
+    https://rossum.app/api/docs/#tag/Document-Schema
     """
 
     id: str
@@ -263,9 +259,7 @@ class Tuple(Node["Multivalue"]):
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#tuple.
-
-    https://elis.rossum.ai/api/docs/#document-schema.
+    https://rossum.app/api/docs/#tag/Document-Schema
     """
 
     id: str
@@ -319,9 +313,7 @@ class Section(Node["Schema"]):
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#section.
-
-    https://elis.rossum.ai/api/docs/#document-schema.
+    https://rossum.app/api/docs/#tag/Document-Schema
     """
 
     id: str
@@ -372,7 +364,7 @@ class Section(Node["Schema"]):
 class Schema(Node):
     """Schema specifies the set of datapoints that are extracted from the document.
 
-    For more information see `Document Schema <https://elis.rossum.ai/api/docs/#document-schema>`_.
+    For more information see `Document Schema <https://rossum.app/api/docs/#tag/Document-Schema>`_.
 
     Attributes
     ----------
@@ -385,16 +377,16 @@ class Schema(Node):
     url
         URL of the schema.
     content
-        List of sections (top-level schema objects, see `Document Schema <https://elis.rossum.ai/api/docs/#document-schema>`_
+        List of sections (top-level schema objects, see `Document Schema <https://rossum.app/api/docs/#tag/Document-Schema>`_
         for description of schema).
     metadata
         Client data.
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#schema.
+    https://rossum.app/api/docs/#tag/Schema
 
-    https://elis.rossum.ai/api/docs/#document-schema.
+    https://rossum.app/api/docs/#tag/Document-Schema
     """
 
     id: int

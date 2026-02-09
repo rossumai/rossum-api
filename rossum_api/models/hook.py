@@ -33,7 +33,7 @@ HookEvent = Literal[
 class HookEventAndAction(str, Enum):
     """Supported list of hook events and actions. Format: "event.action".
 
-    See https://elis.rossum.ai/api/docs/internal/#webhook-events
+    See https://rossum.app/api/docs/#tag/Hook
     We need to define Enum to use it in dataclasses in `list[HookEventAndAction]` for validation.
     """
 
@@ -65,7 +65,7 @@ class Hook:
     """Hook is an extension of Rossum that is notified when specific event occurs.
 
     Hook object is used to configure what endpoint or function is executed and when.
-    For an overview of other extension options see `Extensions <https://elis.rossum.ai/api/docs/#extensions>`_.
+    For an overview of other extension options see `Extensions <https://rossum.app/api/docs/#tag/Extensions>`_.
 
     Notes
     -----
@@ -84,7 +84,7 @@ class Hook:
     config
         Configuration of the hook.
     test
-        Input saved for hook testing purposes, see `Test a hook <https://elis.rossum.ai/api/docs/#test-a-hook>`_.
+        Input saved for hook testing purposes, see `Test a hook <https://rossum.app/api/docs/#operation/hooks_test>`_.
     guide
         Description how to use the extension.
     read_more_url
@@ -101,7 +101,7 @@ class Hook:
         List of all hooks that has to be executed before running this hook.
     events
         List of events, when the hook should be notified.
-        For the list of events see `Webhook events <https://elis.rossum.ai/api/docs/#webhook-events>`_.
+        For the list of events see `Webhook events <https://rossum.app/api/docs/#tag/Hook>`_.
     settings
         Specific settings that will be included in the payload when executing the hook.
         Field is validated with json schema stored in ``settings_schema`` field.
@@ -114,7 +114,7 @@ class Hook:
         Import source of the extension.
     sideload
         List of related objects that should be included in hook request.
-        For the list of events see `Webhook events <https://elis.rossum.ai/api/docs/#webhook-events>`_.
+        For the list of events see `Webhook events <https://rossum.app/api/docs/#tag/Hook>`_.
     token_owner
         URL of a :class:`~rossum_api.models.user.User`.
         If present, an API access token is generated for this user and sent to the hook.
@@ -129,11 +129,11 @@ class Hook:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#hook
+    https://rossum.app/api/docs/#tag/Hook
 
-    https://elis.rossum.ai/api/docs/#test-a-hook
+    https://rossum.app/api/docs/#operation/hooks_test
 
-    https://elis.rossum.ai/api/docs/#webhook-events
+    https://rossum.app/api/docs/#tag/Hook
     """
 
     id: int
@@ -221,9 +221,9 @@ class HookRunData:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#hook
+    https://rossum.app/api/docs/#tag/Hook
 
-    https://elis.rossum.ai/api/docs/#webhook-events
+    https://rossum.app/api/docs/#tag/Hook
     """
 
     log_level: Literal["INFO", "ERROR", "WARNING"]

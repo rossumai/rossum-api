@@ -5,10 +5,6 @@ The Rossum API SDK provides type-safe dataclass models for all API resources.
 These models are automatically populated from API responses and provide
 clear type hints for all fields.
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 1
-
 Overview
 --------
 
@@ -281,4 +277,4 @@ See Also
 --------
 
 * :doc:`clients` - API clients that return these models
-* `Rossum API Documentation <https://elis.rossum.ai/api/docs>`_ - Detailed field descriptions
+* `Rossum API Documentation <https://rossum.app/api/docs>`_ - Detailed field descriptions

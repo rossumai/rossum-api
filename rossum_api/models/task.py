@@ -45,7 +45,7 @@ class Task:
         Expired tasks are being deleted periodically.
     content
         Detailed information related to tasks
-        (see `tasks content <https://elis.rossum.ai/api/docs/#tasks-content>`_ detail).
+        (see `tasks content <https://rossum.app/api/docs/#tag/Task/Task-Content>`_ detail).
     detail
         Detailed message on the status of the task. For failed tasks, error id is included
         in the message and can be used in communication with Rossum support for further investigation.
@@ -56,7 +56,7 @@ class Task:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#task.
+    https://rossum.app/api/docs/#tag/Task
     """
 
     id: int

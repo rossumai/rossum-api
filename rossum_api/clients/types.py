@@ -47,6 +47,8 @@ HookOrdering: TypeAlias = Literal[
 
 OrganizationOrdering: TypeAlias = Literal["id", "name"]
 
+OrganizationGroupOrdering: TypeAlias = Literal["id", "name"]
+
 QueueOrdering: TypeAlias = Literal[
     "id",
     "name",

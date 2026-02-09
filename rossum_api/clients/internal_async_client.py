@@ -89,7 +89,7 @@ class InternalAsyncClient:
         """Retrieve a single object in a specific resource.
 
         Allows passing extra params specifically to allow disabling redirects feature of Tasks.
-        See https://elis.rossum.ai/api/docs/#task.
+        See https://rossum.app/api/docs/#tag/Task.
         If redirects are desired, our raise_for_status wrapper must account for that.
         """
         return await self.request_json("GET", build_url(resource, id_), params=request_params)

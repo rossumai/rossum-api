@@ -20,9 +20,11 @@ class Resource(Enum):
     Group = "groups"
     Hook = "hooks"
     HookRunData = "hooks/logs"  # equivalent to hooks/run now
+    HookTemplate = "hook_templates"
     Inbox = "inboxes"
     Email = "emails"
     Organization = "organizations"
+    OrganizationGroup = "organization_groups"
     Queue = "queues"
     Relation = "relations"
     Rule = "rules"

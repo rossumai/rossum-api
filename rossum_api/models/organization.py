@@ -41,7 +41,7 @@ class Organization:
 
     References
     ----------
-    https://elis.rossum.ai/api/docs/#organization
+    https://rossum.app/api/docs/#tag/Organization
     """
 
     id: int

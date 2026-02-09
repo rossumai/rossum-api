@@ -79,17 +79,37 @@ intersphinx_mapping = {
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 html_static_path = ["_static"]
-html_logo = "_static/logo.png"
+html_logo = "_static/rossum-logo.svg"
+html_favicon = "_static/rossum-logo.svg"
+html_title = "Rossum API SDK"
 
-# Theme options
 html_theme_options = {
-    "navigation_depth": 4,
-    "collapse_navigation": False,
-    "sticky_navigation": True,
-    "version_selector": True,
-    "logo_only": False,
+    "light_css_variables": {
+        "color-brand-primary": "#1E6EE5",
+        "color-brand-content": "#1E6EE5",
+        "color-admonition-background": "rgba(30, 110, 229, 0.05)",
+        "color-sidebar-background": "#ffffff",
+        "color-sidebar-search-background": "#f5f7fa",
+        "color-sidebar-search-border": "#e0e6ed",
+        "color-sidebar-link-text--top-level": "#0d1117",
+        "color-sidebar-item-background--hover": "rgba(30, 110, 229, 0.08)",
+        "color-sidebar-item-expander-background--hover": "rgba(30, 110, 229, 0.08)",
+        "font-stack": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "font-stack--monospace": "'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#61A0FF",
+        "color-brand-content": "#61A0FF",
+        "color-admonition-background": "rgba(97, 160, 255, 0.1)",
+    },
+    "sidebar_hide_name": False,
+    "navigation_with_keys": True,
+    "top_of_page_buttons": ["view"],
+    "source_repository": "https://github.com/rossumai/rossum-api",
+    "source_branch": "main",
+    "source_directory": "docs/",
 }
 
 

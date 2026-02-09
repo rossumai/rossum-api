@@ -15,8 +15,10 @@ from rossum_api.models.email_template import EmailTemplate
 from rossum_api.models.engine import Engine, EngineField
 from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
+from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
 from rossum_api.models.organization import Organization
+from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.queue import Queue
 from rossum_api.models.relation import Relation
 from rossum_api.models.rule import Rule
@@ -49,9 +51,11 @@ RESOURCE_TO_MODEL = {
     Resource.Group: Group,
     Resource.Hook: Hook,
     Resource.HookRunData: HookRunData,
+    Resource.HookTemplate: HookTemplate,
     Resource.Inbox: Inbox,
     Resource.Email: Email,
     Resource.Organization: Organization,
+    Resource.OrganizationGroup: OrganizationGroup,
     Resource.Queue: Queue,
     Resource.Relation: Relation,
     Resource.Rule: Rule,
@@ -74,6 +78,9 @@ def _convert_key(key: str) -> str:
     return key
 
 
+DACITE_CONFIG = dacite.Config(cast=[Enum], convert_key=_convert_key)
+
+
 def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
     """Deserialize payload into dataclasses using dacite.
 
@@ -85,6 +92,7 @@ def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
     if resource == Resource.Schema:
         return Schema.from_dict(payload)
 
-    return dacite.from_dict(
-        model_class, payload, config=dacite.Config(cast=[Enum], convert_key=_convert_key)
-    )
+    if resource == Resource.Rule:
+        return Rule.from_dict(payload)
+
+    return dacite.from_dict(model_class, payload, config=DACITE_CONFIG)
