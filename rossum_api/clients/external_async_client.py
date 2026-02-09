@@ -105,8 +105,8 @@ if TYPE_CHECKING:
         UserRoleOrdering,
         WorkspaceOrdering,
     )
-    from rossum_api.models import Deserializer, JsonDict, ResponsePostProcessor
-    from rossum_api.types import HttpMethod, RossumApiType, Sideload
+    from rossum_api.models import Deserializer, ResponsePostProcessor
+    from rossum_api.types import HttpMethod, Sideload
 
 
 class AsyncRossumAPIClient(
@@ -195,9 +195,7 @@ class AsyncRossumAPIClient(
             max_in_flight_requests=max_in_flight_requests,
             response_post_processor=response_post_processor,
         )
-        self._deserializer: Callable[[Resource, JsonDict], RossumApiType] = (
-            deserializer or deserialize_default
-        )
+        self._deserializer: Deserializer = deserializer or deserialize_default
 
     # ##### QUEUE #####
     async def retrieve_queue(self, queue_id: int) -> QueueType:
@@ -1260,7 +1258,7 @@ class AsyncRossumAPIClient(
         document_content = await self._http_client.request(
             "GET", url=build_resource_content_url(Resource.Document, document_id)
         )
-        return document_content.content  # type: ignore[no-any-return]
+        return document_content.content
 
     async def create_new_document(
         self,
@@ -1686,7 +1684,7 @@ class AsyncRossumAPIClient(
             url=EMAIL_IMPORT_URL,
             files=build_email_import_files(raw_message, recipient, mime_type),
         )
-        return response["url"]  # type: ignore[no-any-return]
+        return response["url"]
 
     # ##### EMAIL TEMPLATES #####
     async def list_email_templates(

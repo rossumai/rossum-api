@@ -109,7 +109,7 @@ class InternalSyncClient:  # noqa: D101
         if export_format == "json":
             # JSON export is paginated just like a regular fetch_all, it abuses **filters kwargs of
             # fetch_all_by_url to pass export-specific query params
-            yield from self.fetch_resources_by_url(url, method=method, **query_params)  # type: ignore
+            yield from self.fetch_resources_by_url(url, method=method, **query_params)
         else:
             # In CSV/XML/XLSX case, all annotations are returned, i.e. the response can be large,
             # chunks of bytes are yielded from HTTP stream to keep memory consumption low.
@@ -246,7 +246,7 @@ class InternalSyncClient:  # noqa: D101
         response = self._request(method, *args, **kwargs)
         if response.status_code == 204:
             return {}
-        return response.json()  # type: ignore[no-any-return]
+        return response.json()
 
     def request(self, method: HttpMethod, *args: Any, **kwargs: Any) -> httpx.Response:  # noqa: D102
         return self._request(method, *args, **kwargs)
@@ -262,9 +262,7 @@ class InternalSyncClient:  # noqa: D101
             reraise=True,
         )
 
-    def _request(  # noqa: RET503 (false positive)
-        self, method: HttpMethod, url: str, *args: Any, **kwargs: Any
-    ) -> httpx.Response:
+    def _request(self, method: HttpMethod, url: str, *args: Any, **kwargs: Any) -> httpx.Response:
         """Perform the actual HTTP call and does error handling.
 
         Arguments:
@@ -287,6 +285,8 @@ class InternalSyncClient:  # noqa: D101
                         raise ForceRetry()
                 self._raise_for_status(response)
                 return response
+
+        raise RuntimeError("Unreachable: retrying produced no attempts")  # pragma: no cover
 
     @staticmethod
     def _raise_for_status(response: httpx.Response) -> None:

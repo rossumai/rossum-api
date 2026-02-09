@@ -286,7 +286,7 @@ class InternalAsyncClient:
         if export_format == "json":
             # JSON export is paginated just like a regular fetch_all, it abuses **filters kwargs of
             # fetch_all_by_url to pass export-specific query params
-            async for result in self.fetch_all_by_url(url, method=method, **query_params):  # type: ignore
+            async for result in self.fetch_all_by_url(url, method=method, **query_params):
                 yield result
         else:
             # In CSV/XML/XLSX case, all annotations are returned, i.e. the response can be large,
@@ -298,7 +298,7 @@ class InternalAsyncClient:
         response = await self._request(method, *args, **kwargs)
         if response.status_code == 204:
             return {}
-        return response.json()  # type: ignore[no-any-return]
+        return response.json()
 
     async def request(self, method: HttpMethod, *args: Any, **kwargs: Any) -> httpx.Response:  # noqa: D102
         return await self._request(method, *args, **kwargs)
@@ -313,7 +313,9 @@ class InternalAsyncClient:
         """
         if refresh or self.token is None:
             await self._authenticate()
-        return self.token  # type: ignore[return-value] # self.token is set in _authenticate method
+        if self.token is None:
+            raise RuntimeError("Authentication failed: token is still None after _authenticate()")
+        return self.token
 
     async def _authenticate(self) -> None:
         async for attempt in self._retrying():
@@ -339,7 +341,7 @@ class InternalAsyncClient:
             reraise=True,
         )
 
-    async def _request(  # noqa: RET503 (false positive)
+    async def _request(
         self, method: HttpMethod, url: str, *args: Any, **kwargs: Any
     ) -> httpx.Response:
         """Perform the actual HTTP call and does error handling.
@@ -366,6 +368,8 @@ class InternalAsyncClient:
                         raise ForceRetry()
                 await self._raise_for_status(response, method)
                 return response
+
+        raise RuntimeError("Unreachable: retrying produced no attempts")  # pragma: no cover
 
     async def _stream(
         self, method: HttpMethod, url: str, *args: Any, **kwargs: Any

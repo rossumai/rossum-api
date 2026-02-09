@@ -3,11 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from rossum_api.types import HttpMethod
+    import httpx
 
 
 class APIClientError(Exception):  # noqa: D101
-    def __init__(self, method: HttpMethod, url: str, status_code: int, error: Exception) -> None:
+    def __init__(
+        self, method: str, url: str | httpx.URL, status_code: int, error: str | Exception
+    ) -> None:
         self.method = method
         self.url = url
         self.status_code = status_code

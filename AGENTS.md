@@ -5,7 +5,7 @@
 - **Test single:** `pytest tests/path/to/test_file.py::TestClass::test_name -x`
 - **Lint:** `ruff check rossum_api/ tests/`
 - **Format:** `ruff format rossum_api/ tests/`
-- **Type check:** `mypy`
+- **Type check:** `ty check`
 
 ## API Reference
 - Docs: https://rossum.app/api/docs/
@@ -22,6 +22,6 @@ Python SDK (`rossum_api/`) for the Rossum platform. Key layers:
 ## Code Style
 - Python 3.10+. Use `from __future__ import annotations` in every file (enforced by ruff isort).
 - Formatter/linter: **ruff** (line-length 99, numpy-style docstrings, see `ruff.toml`).
-- Type annotations required on all functions (`mypy --disallow-untyped-defs`).
+- Type annotations required on all functions (checked by `ty check`).
 - Imports: absolute only (`TID252`), stdlib → third-party → local, guarded `TYPE_CHECKING` imports.
 - Tests use **pytest** + **pytest-asyncio** + **pytest-httpx**; test files mirror `rossum_api/` structure.

@@ -279,11 +279,28 @@ class RuleAction:
         payload_data = data.get("payload", {})
 
         payload_cls = _ACTION_TYPE_TO_PAYLOAD[action_type]
-        payload = (
-            dacite.from_dict(payload_cls, payload_data)
-            if payload_cls is not None
-            else payload_data
-        )
+        payload: RuleActionPayload
+        if payload_cls is not None:
+            result = dacite.from_dict(payload_cls, payload_data)
+            if not isinstance(
+                result,
+                (
+                    ShowMessagePayload,
+                    AddAutomationBlockerPayload,
+                    ChangeStatusPayload,
+                    ChangeQueuePayload,
+                    LabelsPayload,
+                    SchemaIdsPayload,
+                    AddValidationSourcePayload,
+                    SendEmailPayload,
+                ),
+            ):
+                raise TypeError(
+                    f"Expected a known RuleActionPayload type, got {type(result).__name__}"
+                )
+            payload = result
+        else:
+            payload = payload_data
 
         return cls(
             id=data["id"],
