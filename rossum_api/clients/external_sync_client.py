@@ -105,8 +105,8 @@ if TYPE_CHECKING:
         WorkspaceOrdering,
     )
     from rossum_api.dtos import Token, UserCredentials
-    from rossum_api.models import Deserializer, JsonDict, ResponsePostProcessor
-    from rossum_api.types import HttpMethod, RossumApiType, Sideload
+    from rossum_api.models import Deserializer, ResponsePostProcessor
+    from rossum_api.types import HttpMethod, Sideload
 
 
 class SyncRossumAPIClient(
@@ -159,9 +159,7 @@ class SyncRossumAPIClient(
         n_retries: int = 3,
         response_post_processor: ResponsePostProcessor | None = None,
     ) -> None:
-        self._deserializer: Callable[[Resource, JsonDict], RossumApiType] = (
-            deserializer or deserialize_default
-        )
+        self._deserializer: Deserializer = deserializer or deserialize_default
         self.internal_client = InternalSyncClient(
             base_url,
             credentials,
@@ -1184,7 +1182,7 @@ class SyncRossumAPIClient(
         document_content = self.internal_client.request(
             "GET", url=build_resource_content_url(Resource.Document, document_id)
         )
-        return document_content.content  # type: ignore[no-any-return]
+        return document_content.content
 
     def create_new_document(
         self,
@@ -1624,7 +1622,7 @@ class SyncRossumAPIClient(
             url=EMAIL_IMPORT_URL,
             files=build_email_import_files(raw_message, recipient, mime_type),
         )
-        return response["url"]  # type: ignore[no-any-return]
+        return response["url"]
 
     # ##### EMAIL TEMPLATES #####
 
