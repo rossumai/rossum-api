@@ -13,12 +13,12 @@ from rossum_api.exceptions import APIClientError
         pytest.param(ForceRetry(), True, id="force_retry"),
         pytest.param(httpx.RequestError("Error"), True, id="httpx.RequestError"),
         pytest.param(
-            APIClientError("GET", "url", 429, None),
+            APIClientError("GET", "url", 429, ""),
             True,
             id="APIClientError_code_retriable",
         ),
         pytest.param(
-            APIClientError("GET", "url", 501, None),
+            APIClientError("GET", "url", 501, ""),
             False,
             id="APIClientError_code_not_retriable",
         ),

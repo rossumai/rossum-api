@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import dacite
 
@@ -224,7 +224,18 @@ RuleActionPayload = (
     | dict[str, Any]
 )
 
-_ACTION_TYPE_TO_PAYLOAD: dict[str, type | None] = {
+_PayloadClass = (
+    type[ShowMessagePayload]
+    | type[AddAutomationBlockerPayload]
+    | type[ChangeStatusPayload]
+    | type[ChangeQueuePayload]
+    | type[LabelsPayload]
+    | type[SchemaIdsPayload]
+    | type[AddValidationSourcePayload]
+    | type[SendEmailPayload]
+)
+
+_ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass | None] = {
     "show_message": ShowMessagePayload,
     "add_automation_blocker": AddAutomationBlockerPayload,
     "change_status": ChangeStatusPayload,
@@ -279,11 +290,11 @@ class RuleAction:
         payload_data = data.get("payload", {})
 
         payload_cls = _ACTION_TYPE_TO_PAYLOAD[action_type]
-        payload = (
-            dacite.from_dict(payload_cls, payload_data)
-            if payload_cls is not None
-            else payload_data
-        )
+        payload: RuleActionPayload
+        if payload_cls is not None:
+            payload = cast("RuleActionPayload", dacite.from_dict(payload_cls, payload_data))
+        else:
+            payload = payload_data
 
         return cls(
             id=data["id"],

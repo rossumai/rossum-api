@@ -73,7 +73,7 @@ async def test_authenticate(client, login_mock):
             id="rate_limit_error",
         ),
         pytest.param(
-            APIClientError("POST", "https://elis.rossum.ai/api/v1/auth/login", 429, None),
+            APIClientError("POST", "https://elis.rossum.ai/api/v1/auth/login", 429, ""),
             id="api_client_error",
         ),
     ],

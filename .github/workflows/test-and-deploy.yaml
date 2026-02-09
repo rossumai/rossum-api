@@ -18,7 +18,7 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -e '.[tests]'
       - name: Install packages needed for CI
-        run: pip install tox pre-commit
+        run: pip install tox pre-commit "ty==0.0.15"
       - name: Lint all files
         run: pre-commit run --all-files --show-diff-on-failure
       - name: Run tests
