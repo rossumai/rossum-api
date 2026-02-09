@@ -1,6 +1,36 @@
 # CHANGELOG
 
 
+## v3.9.0 (2026-02-09)
+
+### Chores
+
+- Add AGENTS.md for better coding agent experience
+  ([`80994db`](https://github.com/rossumai/rossum-api/commit/80994db716df90cf140bf33829f6a868dc6af9f7))
+
+### Documentation
+
+- Update doc references to the new documentation
+  ([`cf1c8e3`](https://github.com/rossumai/rossum-api/commit/cf1c8e345695ceee825c0e3a7c0b6155f710cee8))
+
+- Update docs design to match Rossum API docs style
+  ([`8ea104f`](https://github.com/rossumai/rossum-api/commit/8ea104ffee618a2b918e0f44d9311ade1e83c94b))
+
+### Features
+
+- Add Hook templates and relevant client methods
+  ([`7308be2`](https://github.com/rossumai/rossum-api/commit/7308be2b863539a8693d3e18dfffd805be244c25))
+
+- Add Organization Group and relevant client methods
+  ([`44298f5`](https://github.com/rossumai/rossum-api/commit/44298f505268a5f1997685359c284a0b638f19fe))
+
+- Add Organization limits
+  ([`f52b00e`](https://github.com/rossumai/rossum-api/commit/f52b00efbb90d555b76d1f9d89c991307e9fab0b))
+
+- Add typed dataclasses for RuleAction payloads and literal types
+  ([`6fddb3f`](https://github.com/rossumai/rossum-api/commit/6fddb3ff2e5c1e16392829011b53938b4ca6c48e))
+
+
 ## v3.8.0 (2026-01-27)
 
 ### Chores
