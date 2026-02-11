@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v3.9.1 (2026-02-11)
+
+### Bug Fixes
+
+- Add missing fields to HookTemplate model
+  ([`f0055b6`](https://github.com/rossumai/rossum-api/commit/f0055b6d3834b298973bd5e2a5149afa32df50e3))
+
+- Derive hook template ID from URL since Rossum API does not send it
+  ([`f0a6941`](https://github.com/rossumai/rossum-api/commit/f0a6941b456b4ed74ff5c634eb9c698420de0566))
+
+
 ## v3.9.0 (2026-02-09)
 
 ### Chores
