@@ -12,14 +12,14 @@ class HookTemplate:
 
     Attributes
     ----------
-    id
-        ID of the hook template.
-    type
-        Hook type.
     name
         Name of the hook template.
     url
         URL of the hook template.
+    id
+        ID of the hook template (derived from ``url``, since Rossum API does not send ID).
+    type
+        Hook type.
     events
         List of events, when the hook should be notified.
     sideload
@@ -52,9 +52,9 @@ class HookTemplate:
     https://rossum.app/api/docs/#tag/Hook-Template
     """
 
-    id: int
     name: str
     url: str
+    id: int | None = None
     type: HookType = "webhook"
     events: list[HookEventAndAction] = field(default_factory=list)
     sideload: list[str] = field(default_factory=list)
@@ -69,3 +69,7 @@ class HookTemplate:
     guide: str | None = None
     read_more_url: str | None = None
     extension_image_url: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.id is None:
+            self.id = int(self.url.rstrip("/").split("/")[-1])

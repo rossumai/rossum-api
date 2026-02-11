@@ -9,7 +9,6 @@ from rossum_api.models.hook_template import HookTemplate
 @pytest.fixture
 def dummy_hook_template():
     return {
-        "id": 100,
         "type": "function",
         "url": "https://elis.rossum.ai/api/v1/hook_templates/100",
         "name": "Vendor Matching",
@@ -46,10 +45,11 @@ class TestHookTemplates:
         client, http_client = elis_client
         http_client.fetch_one.return_value = dummy_hook_template
 
-        uid = dummy_hook_template["id"]
+        uid = 100
         hook_template = await client.retrieve_hook_template(uid)
 
         assert hook_template == HookTemplate(**dummy_hook_template)
+        assert hook_template.id == 100
 
         http_client.fetch_one.assert_called_with(Resource.HookTemplate, uid)
 
@@ -70,7 +70,7 @@ class TestHookTemplatesSync:
         client, http_client = elis_client_sync
         http_client.fetch_resource.return_value = dummy_hook_template
 
-        uid = dummy_hook_template["id"]
+        uid = 100
         hook_template = client.retrieve_hook_template(uid)
 
         assert hook_template == HookTemplate(**dummy_hook_template)
