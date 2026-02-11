@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 from rossum_api.models.hook import HookEventAndAction, HookExtensionSource, HookType
 from rossum_api.types import JsonDict
+
+InstallAction = Literal["copy", "request_access"]
 
 
 @dataclass
@@ -46,6 +49,21 @@ class HookTemplate:
         URL address leading to more info page.
     extension_image_url
         URL address of extension picture.
+    settings_description
+        Contains description for settings.
+    store_description
+        Description of hook displayed in Rossum store.
+    external_url
+        External URL to be called (relates to webhook type).
+    use_token_owner
+        Whether the hook should use token owner.
+    install_action
+        Whether the hook is added directly via application (copy) or on customer's request
+        (request_access).
+    token_lifetime_s
+        Lifetime number of seconds for rossum_authorization_token (min=0, max=7200).
+    order
+        Hook templates can be ordered or grouped by this parameter.
 
     References
     ----------
@@ -69,6 +87,13 @@ class HookTemplate:
     guide: str | None = None
     read_more_url: str | None = None
     extension_image_url: str | None = None
+    settings_description: list[JsonDict] = field(default_factory=list)
+    store_description: str | None = None
+    external_url: str | None = None
+    use_token_owner: bool = False
+    install_action: InstallAction = "copy"
+    token_lifetime_s: int | None = None
+    order: int = 0
 
     def __post_init__(self) -> None:
         if self.id is None:

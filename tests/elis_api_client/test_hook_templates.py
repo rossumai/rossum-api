@@ -25,6 +25,13 @@ def dummy_hook_template():
         "guide": "Install and configure vendor matching.",
         "read_more_url": "https://rossum.ai/extensions/vendor-matching",
         "extension_image_url": "https://rossum.ai/img/vendor-matching.png",
+        "settings_description": [],
+        "store_description": "Matches vendors automatically.",
+        "external_url": "",
+        "use_token_owner": True,
+        "install_action": "copy",
+        "token_lifetime_s": None,
+        "order": 0,
     }
 
 
