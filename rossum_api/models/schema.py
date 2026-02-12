@@ -19,6 +19,7 @@ class ValueSource(str, Enum):  # noqa: D101
     MANUAL = "manual"
     FORMULA = "formula"
     REASONING = "reasoning"
+    LOOKUP = "lookup"
 
 
 class Node(ABC, Generic[ParentType]):
