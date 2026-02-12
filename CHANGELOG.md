@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.10.0 (2026-02-12)
+
+### Features
+
+- Add 'lookup' to supported value sources
+  ([`aa02f57`](https://github.com/rossumai/rossum-api/commit/aa02f573097df404bb157fdb9bcf2f65aabcb830))
+
+
 ## v3.9.1 (2026-02-11)
 
 ### Bug Fixes
