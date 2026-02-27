@@ -268,7 +268,7 @@ class InternalAsyncClient:
                 semantics is different for each resource
         """
         url = build_upload_url(resource, id_)
-        files = build_upload_files(await fp.read(), filename, values, metadata)
+        files = build_upload_files(await fp.read(), filename, values, metadata)  # ty: ignore[unresolved-attribute]
         return await self.request_json("POST", url, files=files)
 
     async def export(  # noqa: D102

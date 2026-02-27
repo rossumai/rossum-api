@@ -21,7 +21,14 @@ repos:
       - id: ty
         name: ty
         entry: ty check
-        language: system
+        language: python
+        additional_dependencies: [
+            "ty==0.0.19",
+            aiofiles,
+            dacite,
+            httpx,
+            tenacity,
+        ]
         pass_filenames: false
         types: [python]
   - repo: local
