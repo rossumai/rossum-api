@@ -9,6 +9,7 @@
 
 ## API Reference
 - Docs: https://rossum.app/api/docs/
+- OpenAPI spec: https://rossum.app/api/docs/openapi/openapi-specs/openapi.external.json
 - Use these when porting new endpoints. OpenAPI tags map to `Resource` enum values in `domain_logic/resources.py` (e.g. tag `Annotation` → `Resource.Annotation` → URL segment `"annotations"`). Operation IDs (e.g. `annotations_list`, `queues_create`) correspond to SDK methods like `list_annotations`, `create_new_queue`.
 - Individual tag/operation pages: `https://rossum.app/api/docs/#tag/{Tag}` (e.g. `#tag/Queue`, `#tag/Annotation`) and `https://rossum.app/api/docs/#tag/{Tag}/operation/{operation_id}` (e.g. `#tag/Queue/operation/queues_list`, `#tag/Annotation/operation/annotations_create`).
 
