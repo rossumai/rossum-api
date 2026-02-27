@@ -268,7 +268,7 @@ class InternalAsyncClient:
                 semantics is different for each resource
         """
         url = build_upload_url(resource, id_)
-        files = build_upload_files(await fp.read(), filename, values, metadata)
+        files = build_upload_files(await fp.read(), filename, values, metadata)  # ty: ignore[unresolved-attribute]
         return await self.request_json("POST", url, files=files)
 
     async def export(  # noqa: D102
@@ -286,7 +286,7 @@ class InternalAsyncClient:
         if export_format == "json":
             # JSON export is paginated just like a regular fetch_all, it abuses **filters kwargs of
             # fetch_all_by_url to pass export-specific query params
-            async for result in self.fetch_all_by_url(url, method=method, **query_params):  # type: ignore
+            async for result in self.fetch_all_by_url(url, method=method, **query_params):
                 yield result
         else:
             # In CSV/XML/XLSX case, all annotations are returned, i.e. the response can be large,
@@ -298,7 +298,7 @@ class InternalAsyncClient:
         response = await self._request(method, *args, **kwargs)
         if response.status_code == 204:
             return {}
-        return response.json()  # type: ignore[no-any-return]
+        return response.json()
 
     async def request(self, method: HttpMethod, *args: Any, **kwargs: Any) -> httpx.Response:  # noqa: D102
         return await self._request(method, *args, **kwargs)
@@ -339,7 +339,7 @@ class InternalAsyncClient:
             reraise=True,
         )
 
-    async def _request(  # noqa: RET503 (false positive)
+    async def _request(
         self, method: HttpMethod, url: str, *args: Any, **kwargs: Any
     ) -> httpx.Response:
         """Perform the actual HTTP call and does error handling.
@@ -366,6 +366,7 @@ class InternalAsyncClient:
                         raise ForceRetry()
                 await self._raise_for_status(response, method)
                 return response
+        raise RuntimeError("Unreachable: retrying produced no attempts")
 
     async def _stream(
         self, method: HttpMethod, url: str, *args: Any, **kwargs: Any
@@ -401,5 +402,5 @@ class InternalAsyncClient:
         except httpx.HTTPStatusError as e:
             content = response.content if response.stream is None else await response.aread()
             raise APIClientError(
-                method, response.url, response.status_code, content.decode("utf-8")
+                method, str(response.url), response.status_code, content.decode("utf-8")
             ) from e

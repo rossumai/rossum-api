@@ -1,0 +1,17 @@
+name: Pre-commit
+
+on: [push, pull_request]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Install pre-commit and ty
+        run: pip install pre-commit "ty==0.0.15"
+      - name: Run pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure

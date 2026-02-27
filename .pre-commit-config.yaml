@@ -16,19 +16,19 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.18.2
+  - repo: local
     hooks:
-      - id: mypy
+      - id: ty
+        name: ty
+        entry: ty check
+        language: python
         additional_dependencies: [
+            "ty==0.0.19",
+            aiofiles,
             dacite,
             httpx,
             tenacity,
-            types-aiofiles,
-            types-mock,
         ]
-        args: []
-        language: python
         pass_filenames: false
         types: [python]
   - repo: local

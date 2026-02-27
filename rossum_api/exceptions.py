@@ -7,7 +7,9 @@ if TYPE_CHECKING:
 
 
 class APIClientError(Exception):  # noqa: D101
-    def __init__(self, method: HttpMethod, url: str, status_code: int, error: Exception) -> None:
+    def __init__(
+        self, method: HttpMethod, url: str, status_code: int, error: Exception | str
+    ) -> None:
         self.method = method
         self.url = url
         self.status_code = status_code

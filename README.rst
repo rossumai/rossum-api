@@ -191,7 +191,7 @@ Or run specific tools:
    pre-commit run ruff-format --all-files
 
    # Type checking
-   pre-commit run mypy --all-files
+   pre-commit run ty --all-files
 
    # Run tests
    pytest
