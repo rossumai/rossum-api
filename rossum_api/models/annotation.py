@@ -9,6 +9,43 @@ from rossum_api.models.user import User
 
 
 @dataclass
+class AnnotationProcessingDuration:
+    """Processing duration metrics for an annotation.
+
+    Arguments
+    ---------
+    annotation
+        URL of the annotation object.
+    time_spent_active
+        Active time spent on the annotation in seconds (excludes idle time).
+    time_spent_overall
+        Overall time spent on the annotation in seconds.
+    time_spent_edit
+        Time spent editing the annotation in seconds.
+    time_spent_blockers
+        Time spent on automation blockers in seconds.
+    time_spent_emails
+        Time spent on emails in seconds.
+    time_spent_opening
+        Time spent opening the annotation in seconds.
+
+    References
+    ----------
+    https://rossum.app/api/docs/openapi/api/annotation/#annotation-processing-duration
+
+    https://rossum.app/api/docs/openapi/api/annotation/
+    """
+
+    annotation: str
+    time_spent_active: float
+    time_spent_overall: float
+    time_spent_edit: float
+    time_spent_blockers: float
+    time_spent_emails: float
+    time_spent_opening: float
+
+
+@dataclass
 class Prediction:
     """Internal only description of prediction source and version."""
 

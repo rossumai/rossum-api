@@ -6,6 +6,7 @@ from rossum_api.domain_logic.resources import Resource
 from rossum_api.domain_logic.urls import (
     build_export_url,
     build_full_login_url,
+    build_resource_processing_duration_url,
     build_upload_url,
     build_url,
     parse_annotation_id_from_datapoint_url,
@@ -50,3 +51,10 @@ def test_build_upload_url():
 
 def test_build_export_url():
     assert build_export_url(Resource.Queue, 123) == "queues/123/export"
+
+
+def test_build_resource_processing_duration_url():
+    assert (
+        build_resource_processing_duration_url(Resource.Annotation, 314528)
+        == "annotations/314528/processing_duration"
+    )

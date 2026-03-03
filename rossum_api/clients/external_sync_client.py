@@ -26,13 +26,14 @@ from rossum_api.domain_logic.urls import (
     build_resource_content_operations_url,
     build_resource_content_url,
     build_resource_delete_url,
+    build_resource_processing_duration_url,
     build_resource_search_url,
     build_resource_start_url,
     build_upload_url,
     parse_resource_id_from_url,
 )
 from rossum_api.models import DACITE_CONFIG, deserialize_default
-from rossum_api.models.annotation import Annotation
+from rossum_api.models.annotation import Annotation, AnnotationProcessingDuration
 from rossum_api.models.connector import Connector
 from rossum_api.models.document import Document
 from rossum_api.models.document_relation import DocumentRelation
@@ -1143,6 +1144,28 @@ class SyncRossumAPIClient(
         self.internal_client.request(
             "POST", url=build_resource_cancel_url(Resource.Annotation, annotation_id)
         )
+
+    def retrieve_annotation_processing_duration(
+        self, annotation_id: int
+    ) -> AnnotationProcessingDuration:
+        """Retrieve processing duration metrics for an :class:`~rossum_api.models.annotation.Annotation`.
+
+        Parameters
+        ----------
+        annotation_id
+            ID of an annotation to retrieve processing duration for.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/annotation/#annotation-processing-duration
+
+        https://rossum.app/api/docs/openapi/api/annotation/
+        """
+        data = self.internal_client.request_json(
+            "GET",
+            build_resource_processing_duration_url(Resource.Annotation, annotation_id),
+        )
+        return AnnotationProcessingDuration(**data)
 
     # ##### DOCUMENTS #####
 

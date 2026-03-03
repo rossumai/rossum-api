@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from rossum_api.domain_logic.resources import Resource
-from rossum_api.models.annotation import Annotation
+from rossum_api.models.annotation import Annotation, AnnotationProcessingDuration
 from rossum_api.models.automation_blocker import AutomationBlocker, AutomationBlockerContent
 from rossum_api.models.document import Document
 from rossum_api.models.user import User
@@ -141,6 +141,19 @@ def dummy_annotation_with_sideloads():
         "has_email_thread_with_replies": False,
         "has_email_thread_with_new_replies": False,
         "organization": "https://elis.develop.r8.lol/api/v1/organizations/40507",
+    }
+
+
+@pytest.fixture
+def dummy_annotation_processing_duration():
+    return {
+        "annotation": "https://elis.rossum.ai/api/v1/annotations/314528",
+        "time_spent_active": 12.3,
+        "time_spent_overall": 23.4,
+        "time_spent_edit": 1.23,
+        "time_spent_blockers": 2.34,
+        "time_spent_emails": 3.45,
+        "time_spent_opening": 4.56,
     }
 
 
@@ -441,6 +454,23 @@ class TestAnnotations:
 
         http_client.request.assert_called_with(
             "POST", url=f"{Resource.Annotation.value}/{aid}/cancel"
+        )
+
+    async def test_retrieve_annotation_processing_duration(
+        self, elis_client, dummy_annotation, dummy_annotation_processing_duration
+    ):
+        client, http_client = elis_client
+        http_client.request_json.return_value = dummy_annotation_processing_duration
+
+        aid = dummy_annotation["id"]
+        processing_duration = await client.retrieve_annotation_processing_duration(aid)
+
+        assert processing_duration == AnnotationProcessingDuration(
+            **dummy_annotation_processing_duration
+        )
+
+        http_client.request_json.assert_called_with(
+            "GET", f"{Resource.Annotation.value}/{aid}/processing_duration"
         )
 
 
@@ -744,4 +774,21 @@ class TestAnnotationsSync:
 
         http_client.request.assert_called_with(
             "POST", url=f"{Resource.Annotation.value}/{aid}/cancel"
+        )
+
+    def test_retrieve_annotation_processing_duration(
+        self, elis_client_sync, dummy_annotation, dummy_annotation_processing_duration
+    ):
+        client, http_client = elis_client_sync
+        http_client.request_json.return_value = dummy_annotation_processing_duration
+
+        aid = dummy_annotation["id"]
+        processing_duration = client.retrieve_annotation_processing_duration(aid)
+
+        assert processing_duration == AnnotationProcessingDuration(
+            **dummy_annotation_processing_duration
+        )
+
+        http_client.request_json.assert_called_with(
+            "GET", f"{Resource.Annotation.value}/{aid}/processing_duration"
         )

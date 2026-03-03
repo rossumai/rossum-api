@@ -68,3 +68,7 @@ def build_resource_content_operations_url(resource: Resource, id_: int) -> str:
 
 def build_organization_limits_url(id_: int) -> str:
     return f"organizations/{id_}/limits"
+
+
+def build_resource_processing_duration_url(resource: Resource, id_: int) -> str:
+    return f"{resource.value}/{id_}/processing_duration"
