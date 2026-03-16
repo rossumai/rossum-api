@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.11.2 (2026-03-16)
+
+### Bug Fixes
+
+- Add matching and enum_value_type fields to Datapoint schema model
+  ([`b2e614f`](https://github.com/rossumai/rossum-api/commit/b2e614fd4c7fed03cb9fe12911469fa92794ddb0))
+
+
 ## v3.11.1 (2026-03-10)
 
 ### Bug Fixes
