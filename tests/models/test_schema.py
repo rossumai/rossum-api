@@ -4,7 +4,14 @@ from dataclasses import asdict
 
 import pytest
 
-from rossum_api.models.schema import Datapoint, Multivalue, Schema, Section, Tuple, ValueSource
+from rossum_api.models.schema import (
+    Datapoint,
+    Multivalue,
+    Schema,
+    Section,
+    Tuple,
+    ValueSource,
+)
 
 
 @pytest.fixture
@@ -347,3 +354,136 @@ class TestSchemaModels:
             label="Amount",
         )
         assert dp.is_button is False
+
+    def test_datapoint_enum_value_type(self):
+        """Test enum_value_type field on Datapoint."""
+        dp = Datapoint(id="currency", type="enum", enum_value_type="string")
+        assert dp.enum_value_type == "string"
+
+    def test_datapoint_enum_value_type_default_none(self):
+        """Test enum_value_type defaults to None."""
+        dp = Datapoint(id="field1", type="string")
+        assert dp.enum_value_type is None
+
+    def test_schema_from_dict_with_matching(self):
+        """Test full schema deserialization with matching data in API format."""
+        schema_dict = {
+            "id": 1,
+            "content": [
+                {
+                    "id": "section1",
+                    "category": "section",
+                    "children": [
+                        {
+                            "id": "vendor_field",
+                            "type": "string",
+                            "category": "datapoint",
+                            "enum_value_type": "string",
+                            "matching": {
+                                "type": "master_data_hub",
+                                "configuration": {
+                                    "dataset": "vendors",
+                                    "queries": [
+                                        {
+                                            "//": "Find active vendors",
+                                            "aggregate": [{"$match": {"active": True}}],
+                                        }
+                                    ],
+                                    "variables": {
+                                        "vendor_name": {"__formula": "sender_name"},
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                }
+            ],
+        }
+        restored = Schema.from_dict(schema_dict)
+        dp = restored.content[0].children[0]
+        assert dp.matching is not None
+        assert dp.matching.type == "master_data_hub"
+        assert dp.matching.configuration.dataset == "vendors"
+        assert dp.matching.configuration.queries[0].comment == "Find active vendors"
+        assert dp.matching.configuration.variables["vendor_name"].formula == "sender_name"
+        assert dp.enum_value_type == "string"
+
+    def test_schema_from_dict_with_matching_in_tuple(self):
+        """Test full schema deserialization with matching data inside tuple in API format."""
+        data = {
+            "id": 1,
+            "content": [
+                {
+                    "id": "section1",
+                    "category": "section",
+                    "children": [
+                        {
+                            "id": "items",
+                            "category": "multivalue",
+                            "children": {
+                                "id": "item",
+                                "category": "tuple",
+                                "children": [
+                                    {
+                                        "id": "vendor",
+                                        "category": "datapoint",
+                                        "type": "string",
+                                        "matching": {
+                                            "type": "master_data_hub",
+                                            "configuration": {
+                                                "dataset": "vendors",
+                                                "queries": [{"aggregate": []}],
+                                                "variables": {
+                                                    "v": {"__formula": "name"},
+                                                },
+                                            },
+                                        },
+                                    }
+                                ],
+                            },
+                        }
+                    ],
+                }
+            ],
+        }
+        schema = Schema.from_dict(data)
+        vendor = schema.get_by_id("vendor")
+        assert isinstance(vendor, Datapoint)
+        assert vendor.matching is not None
+        assert vendor.matching.type == "master_data_hub"
+        assert vendor.matching.configuration.dataset == "vendors"
+        assert vendor.matching.configuration.variables["v"].formula == "name"
+
+    def test_datapoint_from_dict_without_matching_key(self):
+        """Test from_dict when 'matching' key is absent from data."""
+        dp = Datapoint.from_dict({"id": "simple_field", "type": "string"})
+        assert dp.matching is None
+
+    def test_datapoint_from_dict_with_matching_none(self):
+        """Test from_dict when 'matching' is explicitly set to None."""
+        dp = Datapoint.from_dict({"id": "simple_field", "type": "string", "matching": None})
+        assert dp.matching is None
+
+    def test_datapoint_matching_round_trip(self):
+        """Test that asdict -> from_dict round-trip preserves matching data."""
+        from dataclasses import asdict
+
+        data = {
+            "id": "vendor",
+            "type": "string",
+            "category": "datapoint",
+            "matching": {
+                "type": "master_data_hub",
+                "configuration": {
+                    "dataset": "vendors",
+                    "queries": [{"//": "Find vendors", "aggregate": []}],
+                    "variables": {"v": {"__formula": "name"}},
+                },
+            },
+        }
+        dp = Datapoint.from_dict(data)
+        d = asdict(dp)
+        dp2 = Datapoint.from_dict(d)
+        assert dp2.matching is not None
+        assert dp2.matching.configuration.variables["v"].formula == "name"
+        assert dp2.matching.configuration.queries[0].comment == "Find vendors"

@@ -13,6 +13,63 @@ if TYPE_CHECKING:
 ParentType = TypeVar("ParentType")
 
 
+@dataclass
+class MatchingQuery:
+    """A single matching query using a MongoDB aggregation pipeline."""
+
+    aggregate: list[dict[str, Any]]
+    comment: str = ""
+
+
+@dataclass
+class MatchingVariable:
+    """A formula-based variable used in matching queries."""
+
+    formula: str = ""
+
+
+@dataclass
+class MatchingConfiguration:
+    """Configuration for master data hub matching on a datapoint."""
+
+    dataset: str
+    queries: list[MatchingQuery]
+    variables: dict[str, MatchingVariable]
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> MatchingConfiguration:
+        """Create MatchingConfiguration, mapping __formula keys in variables.
+
+        Accepts both the API format (``__formula``, ``//``) and the
+        ``dataclasses.asdict`` format (``formula``, ``comment``) so that
+        a serialization round-trip works correctly.
+        """
+        data = data.copy()
+        raw_vars = data.pop("variables")
+        data["variables"] = {
+            name: MatchingVariable(formula=v.get("__formula", v.get("formula", "")))
+            for name, v in raw_vars.items()
+        }
+        raw_queries = data.pop("queries")
+        data["queries"] = [
+            MatchingQuery(
+                aggregate=query["aggregate"],
+                # "//" is the comment key used by the Rossum API upstream
+                comment=query.get("//", query.get("comment", "")),
+            )
+            for query in raw_queries
+        ]
+        return dacite.from_dict(cls, data)
+
+
+@dataclass
+class Matching:
+    """Matching configuration for a datapoint (e.g. master data hub lookup)."""
+
+    type: Literal["master_data_hub"]
+    configuration: MatchingConfiguration
+
+
 class ValueSource(str, Enum):  # noqa: D101
     CAPTURED = "captured"
     DATA = "data"
@@ -86,6 +143,10 @@ class Datapoint(Node["Multivalue | Section | Tuple"]):
         Prompt definition, required only for fields of type reasoning.
     context
         Context information for the field.
+    matching
+        Matching configuration for master data hub lookup.
+    enum_value_type
+        Value type for enum fields used by lookup fields.
 
     References
     ----------
@@ -113,6 +174,8 @@ class Datapoint(Node["Multivalue | Section | Tuple"]):
     formula: str | None = None
     prompt: str | None = None
     context: list[str] | None = None
+    matching: Matching | None = None
+    enum_value_type: Literal["string", "number", "date"] | None = None
 
     @property
     def is_button(self) -> bool:  # noqa: D102
@@ -148,6 +211,16 @@ class Datapoint(Node["Multivalue | Section | Tuple"]):
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Datapoint:
         """Create Datapoint from dictionary."""
+        matching_data = data.get("matching")
+        if matching_data is None:
+            datapoint: Datapoint = dacite.from_dict(cls, data)
+            return datapoint
+
+        data = data.copy()
+        data["matching"] = Matching(
+            type=matching_data["type"],
+            configuration=MatchingConfiguration.from_dict(matching_data["configuration"]),
+        )
         datapoint: Datapoint = dacite.from_dict(cls, data)
         return datapoint
 
