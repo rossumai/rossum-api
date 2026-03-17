@@ -6,13 +6,16 @@ import pytest
 from rossum_api.domain_logic.resources import Resource
 from rossum_api.models.rule import (
     AddAutomationBlockerPayload,
+    AddRemoveLabelPayload,
     AddValidationSourcePayload,
     ChangeQueuePayload,
     ChangeStatusPayload,
+    CustomActionPayload,
     LabelsPayload,
     Rule,
     SchemaIdsPayload,
     SendEmailPayload,
+    ShowHideFieldPayload,
     ShowMessagePayload,
 )
 
@@ -291,13 +294,17 @@ class TestRuleActionDeserialization:
                 AddAutomationBlockerPayload,
             ),
             ("change_status", {"method": "postpone"}, ChangeStatusPayload),
-            ("change_queue", {"queue_id": 42, "reimport": True}, ChangeQueuePayload),
+            (
+                "change_queue",
+                {"queue": "https://elis.rossum.ai/api/v1/queues/42", "reimport": True},
+                ChangeQueuePayload,
+            ),
             ("add_label", {"labels": ["lbl1"]}, LabelsPayload),
             ("remove_label", {"labels": ["lbl1"]}, LabelsPayload),
-            ("add_remove_label", {"labels": ["lbl1"]}, LabelsPayload),
+            ("add_remove_label", {"labels": ["lbl1"]}, AddRemoveLabelPayload),
             ("show_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
             ("hide_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
-            ("show_hide_field", {"schema_ids": ["s1"]}, SchemaIdsPayload),
+            ("show_hide_field", {"schema_ids": ["s1"]}, ShowHideFieldPayload),
             ("add_validation_source", {"schema_id": "field_1"}, AddValidationSourcePayload),
             (
                 "send_email",
@@ -308,6 +315,11 @@ class TestRuleActionDeserialization:
                 },
                 SendEmailPayload,
             ),
+            (
+                "custom",
+                {"hook_interface": "https://example.com/hook/1", "payload": {"key": "val"}},
+                CustomActionPayload,
+            ),
         ],
     )
     def test_payload_deserialization(self, action_type, payload_data, expected_cls):
@@ -315,20 +327,15 @@ class TestRuleActionDeserialization:
         rule = Rule.from_dict(data)
         assert isinstance(rule.actions[0].payload, expected_cls)
 
-    def test_custom_payload_stays_as_dict(self):
-        data = self._make_rule_dict("custom", {"foo": "bar", "nested": {"a": 1}})
+    def test_unknown_action_type_stays_as_dict(self):
+        data = self._make_rule_dict("some_future_type", {"key": "val"})
         rule = Rule.from_dict(data)
         payload = rule.actions[0].payload
         assert isinstance(payload, dict)
-        assert payload == {"foo": "bar", "nested": {"a": 1}}
-
-    def test_unknown_action_type_raises(self):
-        data = self._make_rule_dict("some_future_type", {"key": "val"})
-        with pytest.raises(KeyError):
-            Rule.from_dict(data)
+        assert payload == {"key": "val"}
 
     def test_payload_with_missing_required_field_raises(self):
-        data = self._make_rule_dict("change_queue", {"reimport": True})
+        data = self._make_rule_dict("custom", {"payload": {}})
         with pytest.raises(dacite.MissingValueError):
             Rule.from_dict(data)
 

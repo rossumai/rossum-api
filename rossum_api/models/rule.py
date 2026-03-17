@@ -99,8 +99,8 @@ class ChangeQueuePayload:
 
     Attributes
     ----------
-    queue_id
-        ID of the target queue.
+    queue
+        URL of the target queue.
     reimport
         Flag that controls whether the annotation will be reimported during the action execution.
 
@@ -109,8 +109,8 @@ class ChangeQueuePayload:
     https://rossum.app/api/docs/openapi/api/rule/
     """
 
-    queue_id: int
-    reimport: bool | None = None
+    queue: str
+    reimport: bool = False
 
 
 @dataclass
@@ -132,15 +132,38 @@ class LabelsPayload:
 
 AddLabelPayload = LabelsPayload
 RemoveLabelPayload = LabelsPayload
-AddRemoveLabelPayload = LabelsPayload
+
+
+@dataclass
+class AddRemoveLabelPayload:
+    """Payload for ``add_remove_label`` rule action.
+
+    When ``condition`` evaluates to True labels are added; when False they are removed.
+
+    Attributes
+    ----------
+    labels
+        URLs of label objects to be linked/unlinked from the processed annotation.
+    condition
+        When True, adds labels; when False, removes them.
+
+    References
+    ----------
+    https://rossum.app/api/docs/openapi/api/rule/
+    """
+
+    labels: list[str] = field(default_factory=list)
+    condition: bool = True
 
 
 @dataclass
 class SchemaIdsPayload:
-    """Payload for ``show_field``, ``hide_field``, and ``show_hide_field`` rule actions.
+    """Payload for ``show_field`` and ``hide_field`` rule actions.
 
     Attributes
     ----------
+    schema_id
+        Single schema field ID whose ``hidden`` attribute will be set accordingly.
     schema_ids
         Schema field IDs whose ``hidden`` attribute will be set accordingly.
 
@@ -149,12 +172,37 @@ class SchemaIdsPayload:
     https://rossum.app/api/docs/openapi/api/rule/
     """
 
+    schema_id: str | None = None
     schema_ids: list[str] = field(default_factory=list)
 
 
 ShowFieldPayload = SchemaIdsPayload
 HideFieldPayload = SchemaIdsPayload
-ShowHideFieldPayload = SchemaIdsPayload
+
+
+@dataclass
+class ShowHideFieldPayload:
+    """Payload for ``show_hide_field`` rule action.
+
+    When ``condition`` evaluates to True fields are shown; when False they are hidden.
+
+    Attributes
+    ----------
+    schema_id
+        Single schema field ID.
+    schema_ids
+        Schema field IDs whose ``hidden`` attribute will be set accordingly.
+    condition
+        When True, shows fields; when False, hides them.
+
+    References
+    ----------
+    https://rossum.app/api/docs/openapi/api/rule/
+    """
+
+    schema_id: str | None = None
+    schema_ids: list[str] = field(default_factory=list)
+    condition: bool = True
 
 
 @dataclass
@@ -165,13 +213,19 @@ class AddValidationSourcePayload:
     ----------
     schema_id
         Schema ID of the datapoint to add the validation source to.
+    schema_ids
+        Schema IDs of the datapoints to add the validation source to.
+    multivalue_child_id
+        For line item context, the tuple datapoint ID.
 
     References
     ----------
     https://rossum.app/api/docs/openapi/api/rule/
     """
 
-    schema_id: str
+    schema_id: str | None = None
+    schema_ids: list[str] = field(default_factory=list)
+    multivalue_child_id: int | None = None
 
 
 @dataclass
@@ -212,15 +266,38 @@ class SendEmailPayload:
     bcc: list[str] = field(default_factory=list)
 
 
+@dataclass
+class CustomActionPayload:
+    """Payload for ``custom`` rule action.
+
+    Attributes
+    ----------
+    hook_interface
+        Hook interface URL. Must be of type ``queue_action``.
+    payload
+        Custom payload to pass to the hook interface.
+
+    References
+    ----------
+    https://rossum.app/api/docs/openapi/api/rule/
+    """
+
+    hook_interface: str
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
 RuleActionPayload = (
     ShowMessagePayload
     | AddAutomationBlockerPayload
     | ChangeStatusPayload
     | ChangeQueuePayload
     | LabelsPayload
+    | AddRemoveLabelPayload
     | SchemaIdsPayload
+    | ShowHideFieldPayload
     | AddValidationSourcePayload
     | SendEmailPayload
+    | CustomActionPayload
     | dict[str, Any]
 )
 
@@ -230,25 +307,28 @@ _PayloadClass = (
     | type[ChangeStatusPayload]
     | type[ChangeQueuePayload]
     | type[LabelsPayload]
+    | type[AddRemoveLabelPayload]
     | type[SchemaIdsPayload]
+    | type[ShowHideFieldPayload]
     | type[AddValidationSourcePayload]
     | type[SendEmailPayload]
+    | type[CustomActionPayload]
 )
 
-_ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass | None] = {
+_ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass] = {
     "show_message": ShowMessagePayload,
     "add_automation_blocker": AddAutomationBlockerPayload,
     "change_status": ChangeStatusPayload,
     "change_queue": ChangeQueuePayload,
     "add_label": LabelsPayload,
     "remove_label": LabelsPayload,
-    "add_remove_label": LabelsPayload,
+    "add_remove_label": AddRemoveLabelPayload,
     "show_field": SchemaIdsPayload,
     "hide_field": SchemaIdsPayload,
-    "show_hide_field": SchemaIdsPayload,
+    "show_hide_field": ShowHideFieldPayload,
     "add_validation_source": AddValidationSourcePayload,
     "send_email": SendEmailPayload,
-    "custom": None,
+    "custom": CustomActionPayload,
 }
 
 
@@ -289,7 +369,7 @@ class RuleAction:
         action_type: RuleActionType = data["type"]
         payload_data = data.get("payload", {})
 
-        payload_cls = _ACTION_TYPE_TO_PAYLOAD[action_type]
+        payload_cls = _ACTION_TYPE_TO_PAYLOAD.get(action_type)
         payload: RuleActionPayload
         if payload_cls is not None:
             payload = cast("RuleActionPayload", dacite.from_dict(payload_cls, payload_data))
