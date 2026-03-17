@@ -266,6 +266,26 @@ class SendEmailPayload:
     bcc: list[str] = field(default_factory=list)
 
 
+@dataclass
+class CustomActionPayload:
+    """Payload for ``custom`` rule action.
+
+    Attributes
+    ----------
+    hook_interface
+        Hook interface URL. Must be of type ``queue_action``.
+    payload
+        Custom payload to pass to the hook interface.
+
+    References
+    ----------
+    https://rossum.app/api/docs/openapi/api/rule/
+    """
+
+    hook_interface: str
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
 RuleActionPayload = (
     ShowMessagePayload
     | AddAutomationBlockerPayload
@@ -277,6 +297,7 @@ RuleActionPayload = (
     | ShowHideFieldPayload
     | AddValidationSourcePayload
     | SendEmailPayload
+    | CustomActionPayload
     | dict[str, Any]
 )
 
@@ -291,9 +312,10 @@ _PayloadClass = (
     | type[ShowHideFieldPayload]
     | type[AddValidationSourcePayload]
     | type[SendEmailPayload]
+    | type[CustomActionPayload]
 )
 
-_ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass | None] = {
+_ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass] = {
     "show_message": ShowMessagePayload,
     "add_automation_blocker": AddAutomationBlockerPayload,
     "change_status": ChangeStatusPayload,
@@ -306,7 +328,7 @@ _ACTION_TYPE_TO_PAYLOAD: dict[str, _PayloadClass | None] = {
     "show_hide_field": ShowHideFieldPayload,
     "add_validation_source": AddValidationSourcePayload,
     "send_email": SendEmailPayload,
-    "custom": None,
+    "custom": CustomActionPayload,
 }
 
 

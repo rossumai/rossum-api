@@ -10,6 +10,7 @@ from rossum_api.models.rule import (
     AddValidationSourcePayload,
     ChangeQueuePayload,
     ChangeStatusPayload,
+    CustomActionPayload,
     LabelsPayload,
     Rule,
     SchemaIdsPayload,
@@ -314,6 +315,11 @@ class TestRuleActionDeserialization:
                 },
                 SendEmailPayload,
             ),
+            (
+                "custom",
+                {"hook_interface": "https://example.com/hook/1", "payload": {"key": "val"}},
+                CustomActionPayload,
+            ),
         ],
     )
     def test_payload_deserialization(self, action_type, payload_data, expected_cls):
@@ -321,20 +327,13 @@ class TestRuleActionDeserialization:
         rule = Rule.from_dict(data)
         assert isinstance(rule.actions[0].payload, expected_cls)
 
-    def test_custom_payload_stays_as_dict(self):
-        data = self._make_rule_dict("custom", {"foo": "bar", "nested": {"a": 1}})
-        rule = Rule.from_dict(data)
-        payload = rule.actions[0].payload
-        assert isinstance(payload, dict)
-        assert payload == {"foo": "bar", "nested": {"a": 1}}
-
     def test_unknown_action_type_raises(self):
         data = self._make_rule_dict("some_future_type", {"key": "val"})
         with pytest.raises(KeyError):
             Rule.from_dict(data)
 
     def test_payload_with_missing_required_field_raises(self):
-        data = self._make_rule_dict("change_queue", {"reimport": True})
+        data = self._make_rule_dict("custom", {"payload": {}})
         with pytest.raises(dacite.MissingValueError):
             Rule.from_dict(data)
 
