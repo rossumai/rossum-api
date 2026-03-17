@@ -291,7 +291,11 @@ class TestRuleActionDeserialization:
                 AddAutomationBlockerPayload,
             ),
             ("change_status", {"method": "postpone"}, ChangeStatusPayload),
-            ("change_queue", {"queue_id": 42, "reimport": True}, ChangeQueuePayload),
+            (
+                "change_queue",
+                {"queue": "https://elis.rossum.ai/api/v1/queues/42", "reimport": True},
+                ChangeQueuePayload,
+            ),
             ("add_label", {"labels": ["lbl1"]}, LabelsPayload),
             ("remove_label", {"labels": ["lbl1"]}, LabelsPayload),
             ("add_remove_label", {"labels": ["lbl1"]}, LabelsPayload),

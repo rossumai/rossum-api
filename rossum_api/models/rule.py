@@ -99,8 +99,8 @@ class ChangeQueuePayload:
 
     Attributes
     ----------
-    queue_id
-        ID of the target queue.
+    queue
+        URL of the target queue.
     reimport
         Flag that controls whether the annotation will be reimported during the action execution.
 
@@ -109,8 +109,8 @@ class ChangeQueuePayload:
     https://rossum.app/api/docs/openapi/api/rule/
     """
 
-    queue_id: int
-    reimport: bool | None = None
+    queue: str
+    reimport: bool = False
 
 
 @dataclass
