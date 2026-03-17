@@ -168,13 +168,19 @@ class AddValidationSourcePayload:
     ----------
     schema_id
         Schema ID of the datapoint to add the validation source to.
+    schema_ids
+        Schema IDs of the datapoints to add the validation source to.
+    multivalue_child_id
+        For line item context, the tuple datapoint ID.
 
     References
     ----------
     https://rossum.app/api/docs/openapi/api/rule/
     """
 
-    schema_id: str
+    schema_id: str | None = None
+    schema_ids: list[str] = field(default_factory=list)
+    multivalue_child_id: int | None = None
 
 
 @dataclass
