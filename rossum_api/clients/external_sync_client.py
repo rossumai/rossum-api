@@ -2103,6 +2103,10 @@ class SyncRossumAPIClient(
         """Request to endpoints with paginated response that do not have direct support in the client."""
         yield from self.internal_client.fetch_resources_by_url(url, *args, **kwargs)
 
+    def request_cursor_paginated(self, url: str, *args: Any, **kwargs: Any) -> Iterator[dict]:
+        """Request to endpoints with cursor-based paginated response."""
+        yield from self.internal_client.cursor_fetch_resources_by_url(url, *args, **kwargs)
+
     def request_json(self, method: HttpMethod, *args: Any, **kwargs: Any) -> dict[str, Any]:
         """Request to endpoints that do not have direct support in the client and return plain JSON."""
         return self.internal_client.request_json(method, *args, **kwargs)

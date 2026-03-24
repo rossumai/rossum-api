@@ -192,7 +192,7 @@ class InternalAsyncClient:
             return
 
         results, total_pages = await self._fetch_page(
-            url, method, query_params, sideloads, json=json
+            url, method, {**query_params, "include_total": "true"}, sideloads, json=json
         )
         # Fire async tasks to fetch the rest of the pages and start yielding results from page 1
         last_page = min(total_pages, max_pages or total_pages)
@@ -226,6 +226,125 @@ class InternalAsyncClient:
         data = await self.request_json(method, url, params=query_params, json=json)
         embed_sideloads(data, sideload_groups)
         return data["results"], data["pagination"]["total_pages"]
+
+    async def cursor_fetch_all(
+        self,
+        resource: Resource,
+        ordering: Sequence[str] = (),
+        sideloads: Sequence[Sideload] = (),
+        content_schema_ids: Sequence[str] = (),
+        method: HttpMethod = "GET",
+        max_pages: int | None = None,
+        json: JsonDict | None = None,
+        **filters: Any,
+    ) -> AsyncIterator[dict[str, Any]]:
+        """Retrieve a list of objects using cursor-based pagination.
+
+        Unlike fetch_all, this method follows the ``next`` URL returned by the API
+        instead of using page numbers.
+
+        Arguments
+        ---------
+        resource
+            name of the resource provided by Elis API
+        ordering
+            comma-delimited fields of the resource, prepend the field with - for descending
+        sideloads
+            A sequence of resources to be fetched along with the requested resource,
+            e.g. ["content", "automation_blockers"] when fetching `annotations` resource.
+        content_schema_ids
+            sideloads only particular `content` fields when fetching `annotations` resource,
+            has no effect when fetching other resources
+        method
+            HTTP method to use for the request
+        max_pages
+            maximum number of pages to fetch
+        json
+            json payload sent with the request. Used for POST requests.
+        filters
+            mapping from resource field to value used to filter records
+        """
+        async for result in self.cursor_fetch_all_by_url(
+            resource.value,
+            ordering,
+            sideloads,
+            content_schema_ids,
+            method,
+            max_pages,
+            json,
+            **filters,
+        ):
+            yield result
+
+    async def cursor_fetch_all_by_url(
+        self,
+        url: str,
+        ordering: Sequence[str] = (),
+        sideloads: Sequence[Sideload] = (),
+        content_schema_ids: Sequence[str] = (),
+        method: HttpMethod = "GET",
+        max_pages: int | None = None,
+        json: JsonDict | None = None,
+        **filters: Any,
+    ) -> AsyncIterator[dict[str, Any]]:
+        """Retrieve a list of objects from a specified URL using cursor-based pagination.
+
+        Unlike fetch_all_by_url, this method follows the ``next`` URL returned by the API
+        instead of using page numbers.
+
+        Arguments
+        ---------
+        url
+            url relative to the Elis API domain, e.g. "/annotations/search"
+        ordering
+            comma-delimited fields of the resource, prepend the field with - for descending
+        sideloads
+            A sequence of resources to be fetched along with the requested resource,
+            e.g. ["content", "automation_blockers"] when fetching `annotations` resource.
+        content_schema_ids
+            sideloads only particular `content` fields when fetching `annotations` resource,
+            has no effect when fetching other resources
+        method
+            HTTP method to use for the request
+        max_pages
+            maximum number of pages to fetch
+        json
+            json payload sent with the request. Used for POST requests.
+        filters
+            mapping from resource field to value used to filter records
+        """
+        query_params = {
+            **build_pagination_params(ordering),
+            **build_sideload_params(sideloads, content_schema_ids),
+            **filters,
+        }
+        results, next_url = await self._fetch_cursor_page(
+            url, method, query_params, sideloads, json=json
+        )
+        for r in results:
+            yield r
+
+        pages_fetched = 1
+        while next_url and (max_pages is None or pages_fetched < max_pages):
+            # next_url already contains all query params, so pass no extra params.
+            results, next_url = await self._fetch_cursor_page(
+                next_url, method, None, sideloads, json=json
+            )
+            for r in results:
+                yield r
+            pages_fetched += 1
+
+    async def _fetch_cursor_page(
+        self,
+        url: str,
+        method: HttpMethod,
+        query_params: dict[str, Any] | None,
+        sideload_groups: Sequence[Sideload],
+        json: JsonDict | None = None,
+    ) -> tuple[list[dict[str, Any]], str | None]:
+        data = await self.request_json(method, url, params=query_params, json=json)
+        embed_sideloads(data, sideload_groups)
+        return data["results"], data.get("next")
 
     async def create(self, resource: Resource, data: dict[str, Any]) -> dict[str, Any]:
         """Create a new object."""
