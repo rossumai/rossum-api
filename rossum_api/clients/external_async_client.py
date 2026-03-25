@@ -2168,6 +2168,13 @@ class AsyncRossumAPIClient(
         async for element in self._http_client.fetch_all_by_url(url, *args, **kwargs):
             yield element
 
+    async def request_cursor_paginated(
+        self, url: str, *args: Any, **kwargs: Any
+    ) -> AsyncIterator[dict]:
+        """Request to endpoints with cursor-based paginated response."""
+        async for element in self._http_client.cursor_fetch_all_by_url(url, *args, **kwargs):
+            yield element
+
     async def request_json(self, method: HttpMethod, *args: Any, **kwargs: Any) -> dict[str, Any]:
         """Request to endpoints that do not have direct support in the client and return plain JSON."""
         return await self._http_client.request_json(method, *args, **kwargs)

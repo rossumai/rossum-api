@@ -219,7 +219,7 @@ class InternalSyncClient:  # noqa: D101
         max_pages: int | None,
     ) -> Iterator[dict[str, Any]]:
         first_page_results, total_pages = self._fetch_page(
-            url, method, query_params, sideloads, json=json
+            url, method, {**query_params, "include_total": "true"}, sideloads, json=json
         )
 
         yield from first_page_results
@@ -242,6 +242,71 @@ class InternalSyncClient:  # noqa: D101
         data = self.request_json(method, url, params=query_params, json=json)
         embed_sideloads(data, sideload_groups)
         return data["results"], data["pagination"]["total_pages"]
+
+    def cursor_fetch_resources(
+        self,
+        resource: Resource,
+        ordering: Sequence[str] = (),
+        sideloads: Sequence[Sideload] = (),
+        content_schema_ids: Sequence[str] = (),
+        method: HttpMethod = "GET",
+        json: JsonDict | None = None,
+        max_pages: int | None = None,
+        **filters: Any,
+    ) -> Iterator[dict[str, Any]]:
+        """Retrieve a list of objects using cursor-based pagination."""
+        return self.cursor_fetch_resources_by_url(
+            resource.value,
+            ordering,
+            sideloads,
+            content_schema_ids,
+            method,
+            json,
+            max_pages,
+            **filters,
+        )
+
+    def cursor_fetch_resources_by_url(
+        self,
+        url: str,
+        ordering: Sequence[str] = (),
+        sideloads: Sequence[Sideload] = (),
+        content_schema_ids: Sequence[str] = (),
+        method: HttpMethod = "GET",
+        json: JsonDict | None = None,
+        max_pages: int | None = None,
+        **filters: Any,
+    ) -> Iterator[dict[str, Any]]:
+        """Retrieve a list of objects from a specified URL using cursor-based pagination."""
+        query_params = build_pagination_params(ordering)
+        query_params.update(build_sideload_params(sideloads, content_schema_ids))
+        query_params.update(**filters)
+
+        results, next_url = self._fetch_cursor_page(
+            url, method, query_params, sideloads, json=json
+        )
+        yield from results
+
+        pages_fetched = 1
+        while next_url and (max_pages is None or pages_fetched < max_pages):
+            # next_url already contains all query params, so pass no extra params.
+            results, next_url = self._fetch_cursor_page(
+                next_url, method, None, sideloads, json=json
+            )
+            yield from results
+            pages_fetched += 1
+
+    def _fetch_cursor_page(
+        self,
+        url: str,
+        method: HttpMethod,
+        query_params: dict[str, Any] | None,
+        sideload_groups: Sequence[Sideload],
+        json: JsonDict | None = None,
+    ) -> tuple[list[dict[str, Any]], str | None]:
+        data = self.request_json(method, url, params=query_params, json=json)
+        embed_sideloads(data, sideload_groups)
+        return data["results"], data.get("next")
 
     def request_json(self, method: HttpMethod, *args: Any, **kwargs: Any) -> dict[str, Any]:  # noqa: D102
         response = self._request(method, *args, **kwargs)

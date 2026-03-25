@@ -175,7 +175,7 @@ def test_fetch_resource(client, httpx_mock):
 
 
 def test_fetch_resources(client, httpx_mock):
-    first_page = "https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&sideload=&content.schema_id="
+    first_page = "https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&include_total=true&sideload=&content.schema_id="
     second_page = "https://elis.rossum.ai/api/v1/workspaces?page=2&page_size=100&ordering=&sideload=&content.schema_id="
     third_page = "https://elis.rossum.ai/api/v1/workspaces?page=3&page_size=100&ordering=&sideload=&content.schema_id="
     httpx_mock.add_response(
@@ -210,7 +210,7 @@ def test_fetch_resources_with_max_pages_limit(client, httpx_mock):
     second_page = "https://elis.rossum.ai/api/v1/workspaces?page=2&page_size=100&ordering=&sideload=&content.schema_id="
     httpx_mock.add_response(
         method="GET",
-        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&sideload=&content.schema_id=",
+        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&include_total=true&sideload=&content.schema_id=",
         json={
             "pagination": {"total": 3, "total_pages": 3, "next": second_page, "previous": None},
             "results": WORKSPACES[:1],
@@ -223,7 +223,7 @@ def test_fetch_resources_with_max_pages_limit(client, httpx_mock):
 def test_fetch_resources_ordering(client, httpx_mock):
     httpx_mock.add_response(
         method="GET",
-        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=-id,name&sideload=&content.schema_id=",
+        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=-id,name&include_total=true&sideload=&content.schema_id=",
         json={
             "pagination": {"total": 3, "total_pages": 1, "next": None, "previous": None},
             "results": WORKSPACES,
@@ -236,7 +236,7 @@ def test_fetch_resources_ordering(client, httpx_mock):
 def test_fetch_resources_filters(client, httpx_mock):
     httpx_mock.add_response(
         method="GET",
-        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&name=Test&autopilot=1&ordering=&sideload=&content.schema_id=",
+        url="https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&include_total=true&sideload=&content.schema_id=&name=Test&autopilot=1",
         json={
             "pagination": {"total": 3, "total_pages": 1, "next": None, "previous": None},
             "results": WORKSPACES,
@@ -249,7 +249,7 @@ def test_fetch_resources_filters(client, httpx_mock):
 def test_fetch_resources_sideload(client, httpx_mock):
     httpx_mock.add_response(
         method="GET",
-        url="https://elis.rossum.ai/api/v1/annotations?page_size=100&sideload=content,automation_blockers&content.schema_id=invoice_id,date_issue&ordering=",
+        url="https://elis.rossum.ai/api/v1/annotations?page_size=100&ordering=&include_total=true&sideload=content,automation_blockers&content.schema_id=invoice_id,date_issue",
         json={
             "pagination": {"total": 3, "total_pages": 1, "next": None, "previous": None},
             "results": ANNOTATIONS,
@@ -273,6 +273,44 @@ def test_fetch_resources_sideload(client, httpx_mock):
     expected_annotations[2]["content"] = []
 
     assert annotations == expected_annotations
+
+
+def test_cursor_fetch_resources(client, httpx_mock):
+    first_page_url = "https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&sideload=&content.schema_id="
+    second_page_url = "https://elis.rossum.ai/api/v1/workspaces?cursor=abc123"
+    httpx_mock.add_response(
+        method="GET",
+        url=first_page_url,
+        json={
+            "next": second_page_url,
+            "results": WORKSPACES[:2],
+        },
+    )
+    httpx_mock.add_response(
+        method="GET",
+        url=second_page_url,
+        json={
+            "next": None,
+            "results": WORKSPACES[2:],
+        },
+    )
+    workspaces = list(client.cursor_fetch_resources(Resource.Workspace))
+    assert workspaces == WORKSPACES
+
+
+def test_cursor_fetch_resources_with_max_pages(client, httpx_mock):
+    first_page_url = "https://elis.rossum.ai/api/v1/workspaces?page_size=100&ordering=&sideload=&content.schema_id="
+    second_page_url = "https://elis.rossum.ai/api/v1/workspaces?cursor=abc123"
+    httpx_mock.add_response(
+        method="GET",
+        url=first_page_url,
+        json={
+            "next": second_page_url,
+            "results": WORKSPACES[:2],
+        },
+    )
+    workspaces = list(client.cursor_fetch_resources(Resource.Workspace, max_pages=1))
+    assert workspaces == WORKSPACES[:2]
 
 
 def test_sideload(client, httpx_mock):
@@ -375,13 +413,13 @@ def test_upload(client, httpx_mock):
         (
             {},
             "GET",
-            "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&columns=col1%2Ccol2&id=456%2C789&ordering=&sideload=&content.schema_id=",
+            "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&include_total=true&columns=col1%2Ccol2&id=456%2C789&ordering=&sideload=&content.schema_id=",
             "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&page=2&columns=col1%2Ccol2&id=456%2C789&ordering=&sideload=&content.schema_id=",
         ),
         (
             {"to_status": "exported"},
             "POST",
-            "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&columns=col1%2Ccol2&id=456%2C789&to_status=exported&ordering=&sideload=&content.schema_id=",
+            "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&include_total=true&columns=col1%2Ccol2&id=456%2C789&to_status=exported&ordering=&sideload=&content.schema_id=",
             "https://elis.rossum.ai/api/v1/queues/123/export?format=json&page_size=100&page=2&columns=col1%2Ccol2&id=456%2C789&to_status=exported&ordering=&sideload=&content.schema_id=",
         ),
     ],
