@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.13.0 (2026-03-25)
+
+### Features
+
+- **client**: Add cursor pagination and fix existing pagination
+  ([`970644b`](https://github.com/rossumai/rossum-api/commit/970644bb1a986a7d2bef41bfb31853b6a2afea67))
+
+
 ## v3.12.1 (2026-03-23)
 
 ### Bug Fixes
