@@ -29,6 +29,10 @@ def dummy_rule():
         "enabled": True,
         "organization": "https://elis.rossum.ai/api/v1/organizations/1001",
         "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
+        "queues": [
+            "https://elis.rossum.ai/api/v1/queues/101",
+            "https://elis.rossum.ai/api/v1/queues/102",
+        ],
         "trigger_condition": "True",
         "created_by": "https://elis.rossum.ai/api/v1/users/9524",
         "created_at": "2022-01-01T15:02:25.653324Z",
