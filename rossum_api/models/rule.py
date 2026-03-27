@@ -421,8 +421,9 @@ class Rule:
         If False the rule is disabled (default: True).
     organization
         URL of the :class:`~rossum_api.models.organization.Organization` the rule belongs to.
-    schema
-        URL of the :class:`~rossum_api.models.schema.Schema` the rule belongs to.
+    queues
+        List of :class:`~rossum_api.models.queue.Queue` URLs the rule is scoped to.
+        When empty, the rule applies to all queues in the organization.
     trigger_condition
         A condition for triggering the rule's actions.
         This is a formula evaluated by `Rossum TxScript <https://rossum.app/api/docs/openapi/guides/rossum-transaction-scripts/>`_.
@@ -454,7 +455,7 @@ class Rule:
     name: str
     enabled: bool
     organization: str
-    schema: str | None = None
+    queues: list[str] = field(default_factory=list)
     trigger_condition: str = "True"
     url: str | None = None
     created_by: str | None = None

@@ -28,7 +28,10 @@ def dummy_rule():
         "name": "rule",
         "enabled": True,
         "organization": "https://elis.rossum.ai/api/v1/organizations/1001",
-        "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
+        "queues": [
+            "https://elis.rossum.ai/api/v1/queues/101",
+            "https://elis.rossum.ai/api/v1/queues/102",
+        ],
         "trigger_condition": "True",
         "created_by": "https://elis.rossum.ai/api/v1/users/9524",
         "created_at": "2022-01-01T15:02:25.653324Z",
@@ -53,23 +56,9 @@ def dummy_rule():
 
 
 @pytest.fixture
-def dummy_rule_without_schema(dummy_rule):
-    """Creates a Rule dict without schema field (optional field)."""
-    rule_data = dummy_rule.copy()
-    rule_data["schema"] = None
-    return rule_data
-
-
-@pytest.fixture
 def expected_rule(dummy_rule):
     """Creates a Rule object with properly constructed RuleAction objects."""
     return Rule.from_dict(dummy_rule)
-
-
-@pytest.fixture
-def expected_rule_without_schema(dummy_rule_without_schema):
-    """Creates a Rule object without schema."""
-    return Rule.from_dict(dummy_rule_without_schema)
 
 
 @pytest.mark.asyncio
@@ -102,7 +91,6 @@ class TestRules:
 
         data = {
             "name": "Test Rule",
-            "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
             "trigger_condition": "True",
             "actions": [],
         }
@@ -120,7 +108,6 @@ class TestRules:
 
         data = {
             "name": "Test Rule with Formula",
-            "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
             "trigger_condition": formula_condition,
             "actions": [],
         }
@@ -152,20 +139,6 @@ class TestRules:
 
         http_client.delete.assert_called_with(Resource.Rule, rid)
 
-    async def test_retrieve_rule_without_schema(
-        self, elis_client, dummy_rule_without_schema, expected_rule_without_schema
-    ):
-        client, http_client = elis_client
-        http_client.fetch_one.return_value = dummy_rule_without_schema
-
-        uid = dummy_rule_without_schema["id"]
-        rule = await client.retrieve_rule(uid)
-
-        assert rule == expected_rule_without_schema
-        assert rule.schema is None
-
-        http_client.fetch_one.assert_called_with(Resource.Rule, uid)
-
 
 class TestRulesSync:
     def test_list_rules(self, elis_client_sync, dummy_rule, expected_rule):
@@ -196,7 +169,6 @@ class TestRulesSync:
 
         data = {
             "name": "Test Rule",
-            "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
             "trigger_condition": "True",
             "actions": [],
         }
@@ -214,7 +186,6 @@ class TestRulesSync:
 
         data = {
             "name": "Test Rule with Formula",
-            "schema": "https://elis.rossum.ai/api/v1/schemas/1001",
             "trigger_condition": formula_condition,
             "actions": [],
         }
@@ -245,20 +216,6 @@ class TestRulesSync:
         client.delete_rule(rid)
 
         http_client.delete.assert_called_with(Resource.Rule, rid)
-
-    def test_retrieve_rule_without_schema(
-        self, elis_client_sync, dummy_rule_without_schema, expected_rule_without_schema
-    ):
-        client, http_client = elis_client_sync
-        http_client.fetch_resource.return_value = dummy_rule_without_schema
-
-        uid = dummy_rule_without_schema["id"]
-        rule = client.retrieve_rule(uid)
-
-        assert rule == expected_rule_without_schema
-        assert rule.schema is None
-
-        http_client.fetch_resource.assert_called_with(Resource.Rule, uid)
 
 
 class TestRuleActionDeserialization:
