@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rossum_api"
-version = "3.15.0"
+version = "3.16.0"
 license = {text = "MIT"}
 readme = "README.rst"
 description = "Python API client for the Rossum platform."
@@ -52,9 +52,11 @@ docs = [
 
 
 
+
 [tools.setuptools]
 include-package-data = true
 packages = ["find"]
+
 
 
 

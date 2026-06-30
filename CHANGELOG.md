@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.16.0 (2026-06-30)
+
+### Features
+
+- Migrate to the new automation assistant URLs
+  ([`5f78f12`](https://github.com/rossumai/rossum-api/commit/5f78f121996edaa1c9ae3f900e1138eb651e4dac))
+
+
 ## v3.15.0 (2026-05-26)
 
 ### Features
