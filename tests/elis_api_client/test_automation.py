@@ -119,9 +119,7 @@ class TestAutomationSetupAsync:
         assert result == dacite.from_dict(
             AutomationStats, dummy_current_stats, config=DACITE_CONFIG
         )
-        http_client.request_json.assert_called_with(
-            "GET", "queues/123/automation_setup_current_stats"
-        )
+        http_client.request_json.assert_called_with("GET", "queues/123/automation/insights")
 
     async def test_retrieve_automation_projections(self, elis_client, dummy_projections):
         client, http_client = elis_client
@@ -135,7 +133,7 @@ class TestAutomationSetupAsync:
         )
         http_client.request_json.assert_called_with(
             "POST",
-            "queues/123/automation_setup_projections",
+            "queues/123/automation/projections",
             json={"fields": [{"schema_id": "amount_total", "error_rate_limit": 0.05}]},
         )
 
@@ -153,7 +151,7 @@ class TestAutomationSetupAsync:
 
         http_client.request_json.assert_called_with(
             "POST",
-            "queues/123/automation_setup_projections",
+            "queues/123/automation/projections",
             json={"fields": [{"schema_id": "amount_total", "error_rate_limit": 0.05}]},
             params={"exclude_blockers": "error_message,extension"},
         )
@@ -167,7 +165,7 @@ class TestAutomationSetupAsync:
         assert result == [
             dacite.from_dict(AutomationTarget, dummy_automation_target, config=DACITE_CONFIG)
         ]
-        http_client.request_json.assert_called_with("GET", "queues/456/automation_targets")
+        http_client.request_json.assert_called_with("GET", "queues/456/automation/targets")
 
     async def test_create_new_automation_target(self, elis_client):
         client, http_client = elis_client
@@ -190,7 +188,7 @@ class TestAutomationSetupAsync:
         assert result is None
         http_client.request.assert_called_with(
             "POST",
-            "queues/789/automation_targets",
+            "queues/789/automation/targets",
             json={
                 "automation_rate_target": 0.8,
                 "error_rate_target": 0.05,
@@ -232,9 +230,7 @@ class TestAutomationSetupSync:
         assert result == dacite.from_dict(
             AutomationStats, dummy_current_stats, config=DACITE_CONFIG
         )
-        http_client.request_json.assert_called_with(
-            "GET", "queues/123/automation_setup_current_stats"
-        )
+        http_client.request_json.assert_called_with("GET", "queues/123/automation/insights")
 
     def test_retrieve_automation_projections(self, elis_client_sync, dummy_projections):
         client, http_client = elis_client_sync
@@ -248,7 +244,7 @@ class TestAutomationSetupSync:
         )
         http_client.request_json.assert_called_with(
             "POST",
-            "queues/123/automation_setup_projections",
+            "queues/123/automation/projections",
             json={"fields": [{"schema_id": "amount_total", "error_rate_limit": 0.05}]},
         )
 
@@ -261,7 +257,7 @@ class TestAutomationSetupSync:
         assert result == [
             dacite.from_dict(AutomationTarget, dummy_automation_target, config=DACITE_CONFIG)
         ]
-        http_client.request_json.assert_called_with("GET", "queues/456/automation_targets")
+        http_client.request_json.assert_called_with("GET", "queues/456/automation/targets")
 
     def test_create_new_automation_target(self, elis_client_sync):
         client, http_client = elis_client_sync
@@ -284,7 +280,7 @@ class TestAutomationSetupSync:
         assert result is None
         http_client.request.assert_called_with(
             "POST",
-            "queues/789/automation_targets",
+            "queues/789/automation/targets",
             json={
                 "automation_rate_target": 0.8,
                 "error_rate_target": 0.05,
