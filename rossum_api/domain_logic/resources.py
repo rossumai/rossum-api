@@ -11,9 +11,9 @@ class Resource(Enum):
 
     Annotation = "annotations"
     AnnotationProcessingDuration = "annotations/processing_duration"
-    AutomationStats = "automation_insights"
-    AutomationProjections = "automation_projections"
-    AutomationTarget = "automation_targets"
+    AutomationStats = "automation/insights"
+    AutomationProjections = "automation/projections"
+    AutomationTarget = "automation/targets"
     Auth = "auth"
     Connector = "connectors"
     Document = "documents"

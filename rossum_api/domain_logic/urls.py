@@ -75,12 +75,12 @@ def build_resource_processing_duration_url(resource: Resource, id_: int) -> str:
 
 
 def build_automation_insights_url(queue_id: int) -> str:
-    return f"queues/{queue_id}/automation_setup_current_stats"
+    return f"queues/{queue_id}/automation/insights"
 
 
 def build_automation_projections_url(queue_id: int) -> str:
-    return f"queues/{queue_id}/automation_setup_projections"
+    return f"queues/{queue_id}/automation/projections"
 
 
 def build_queue_automation_targets_url(queue_id: int) -> str:
-    return f"queues/{queue_id}/automation_targets"
+    return f"queues/{queue_id}/automation/targets"
