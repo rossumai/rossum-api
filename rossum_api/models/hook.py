@@ -6,28 +6,7 @@ from typing import Literal
 
 from rossum_api.types import JsonDict
 
-HookAction = Literal[
-    "user_update",  # deprecated in favor of `updated` below
-    "created",
-    "updated",
-    "started",
-    "confirm",
-    "changed",
-    "initialize",
-    "export",
-    "received",
-    "manual",
-    "scheduled",
-    "interface",
-]
 HookType = Literal["webhook", "function", "job"]
-HookEvent = Literal[
-    "annotation_status",
-    "annotation_content",
-    "email",
-    "invocation",
-    "upload",
-]
 
 
 class HookEventAndAction(str, Enum):
@@ -222,13 +201,11 @@ class HookRunData:
     References
     ----------
     https://rossum.app/api/docs/openapi/api/hook/
-
-    https://rossum.app/api/docs/openapi/api/hook/
     """
 
     log_level: Literal["INFO", "ERROR", "WARNING"]
-    action: HookAction
-    event: HookEvent
+    action: str
+    event: str
     request_id: str
     organization_id: int
     hook_id: int
