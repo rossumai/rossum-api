@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.16.1 (2026-08-24)
+
+### Bug Fixes
+
+- Use correct types for HookRunData attrs
+  ([`2e686c1`](https://github.com/rossumai/rossum-api/commit/2e686c1b953f351c7654fad8c3c598d77b42874c))
+
+
 ## v3.16.0 (2026-06-30)
 
 ### Features
