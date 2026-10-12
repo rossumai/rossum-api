@@ -313,15 +313,22 @@ def test_cursor_fetch_resources_with_max_pages(client, httpx_mock):
     assert workspaces == WORKSPACES[:2]
 
 
-def test_sideload(client, httpx_mock):
+@pytest.mark.parametrize(
+    "sideload_query_params, query",
+    [
+        pytest.param(None, "", id="no_params"),
+        pytest.param({"content": {"stats_keys": "true"}}, "?stats_keys=true", id="with_params"),
+    ],
+)
+def test_sideload(client, httpx_mock, sideload_query_params, query):
     httpx_mock.add_response(
         method="GET",
-        url=ANNOTATIONS[1]["content"],
+        url=f"{ANNOTATIONS[1]['content']}{query}",
         json={"content": [CONTENT[0], CONTENT[2]]},
     )
 
     annotation = ANNOTATIONS[1].copy()
-    client.sideload(annotation, sideloads=["content"])
+    client.sideload(annotation, sideloads=["content"], sideload_query_params=sideload_query_params)
 
     assert annotation["content"] == [CONTENT[0], CONTENT[2]]
 

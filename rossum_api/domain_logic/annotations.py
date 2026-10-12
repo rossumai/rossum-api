@@ -27,6 +27,14 @@ def validate_list_annotations_params(
         )
 
 
+def validate_sideload_query_params(
+    sideloads: Sequence[Sideload], sideload_query_params: dict[str, dict[str, Any]] | None
+) -> None:
+    """Validate that query params are given only for requested sideloads."""
+    if unknown := set(sideload_query_params or {}) - set(sideloads):
+        raise ValueError(f"Query params given for sideloads that are not requested: {unknown}")
+
+
 def get_http_method_for_annotation_export(**filters: Any) -> HttpMethod:
     """to_status filter requires a different HTTP method.
 

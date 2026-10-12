@@ -375,7 +375,13 @@ class InternalSyncClient:  # noqa: D101
                 content.decode("utf-8"),
             ) from e
 
-    def sideload(self, resource: dict[str, Any], sideloads: Sequence[Sideload]) -> None:
+    def sideload(
+        self,
+        resource: dict[str, Any],
+        sideloads: Sequence[Sideload],
+        *,
+        sideload_query_params: dict[str, dict[str, Any]] | None = None,
+    ) -> None:
         """Update sideloaded resources in place.
 
         The API does not support sideloading when fetching a single resource, we need to load
@@ -384,7 +390,9 @@ class InternalSyncClient:  # noqa: D101
         for sideload in sideloads:
             sideload_url = resource[to_singular(sideload)]
             if sideload_url is not None:
-                fetched = self.request_json("GET", url=sideload_url)
+                fetched = self.request_json(
+                    "GET", url=sideload_url, params=(sideload_query_params or {}).get(sideload)
+                )
                 if sideload == "content":
                     # Content (i.e. list of sections is wrapped in a dict)
                     fetched = fetched["content"]
