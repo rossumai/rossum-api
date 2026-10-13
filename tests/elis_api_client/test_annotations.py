@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
 
@@ -264,7 +264,9 @@ class TestAnnotations:
 
         aid = dummy_annotation["id"]
         annotation = await client.retrieve_annotation(
-            aid, sideloads=["content", "automation_blockers"]
+            aid,
+            sideloads=["content", "automation_blockers"],
+            sideload_query_params={"content": {"stats_keys": "true"}},
         )
 
         # Build expected automation_blocker from the fixture data
@@ -282,6 +284,34 @@ class TestAnnotations:
         )
 
         http_client.fetch_one.assert_called_with(Resource.Annotation, aid)
+        http_client.request_json.assert_has_calls(
+            [
+                call("GET", dummy_annotation["content"], params={"stats_keys": "true"}),
+                call("GET", dummy_annotation["automation_blocker"], params=None),
+            ],
+            any_order=True,
+        )
+
+    @pytest.mark.parametrize(
+        "sideloads, sideload_query_params",
+        [
+            ((), {"content": {"stats_keys": "true"}}),
+            (["content"], {"automation_blocker": {"stats_keys": "true"}}),
+        ],
+    )
+    async def test_retrieve_annotation_with_query_params_for_missing_sideload(
+        self, elis_client, sideloads, sideload_query_params
+    ):
+        client, http_client = elis_client
+
+        with pytest.raises(
+            ValueError, match="Query params given for sideloads that are not requested"
+        ):
+            await client.retrieve_annotation(
+                1, sideloads=sideloads, sideload_query_params=sideload_query_params
+            )
+
+        assert not http_client.fetch_one.called
 
     async def test_retrieve_annotation_with_none_automation_blocker(
         self, elis_client, dummy_annotation
@@ -590,14 +620,13 @@ class TestAnnotationsSync:
         }
         http_client.fetch_resource.return_value = annotation_with_sideloads.copy()
 
-        def mock_sideload(resource, sideloads):
-            resource["content"] = []
-            resource["automation_blocker"] = automation_blocker_data
-
-        http_client.sideload.side_effect = mock_sideload
-
         aid = dummy_annotation["id"]
-        annotation = client.retrieve_annotation(aid, sideloads=["content", "automation_blockers"])
+        sideload_query_params = {"content": {"stats_keys": "true"}}
+        annotation = client.retrieve_annotation(
+            aid,
+            sideloads=["content", "automation_blockers"],
+            sideload_query_params=sideload_query_params,
+        )
 
         expected_automation_blocker = AutomationBlocker(**automation_blocker_data)
         expected_automation_blocker.content = [
@@ -613,7 +642,30 @@ class TestAnnotationsSync:
         )
 
         http_client.fetch_resource.assert_called_with(Resource.Annotation, aid)
-        http_client.sideload.assert_called_once()
+        http_client.sideload.assert_called_once_with(
+            ANY, ["content", "automation_blockers"], sideload_query_params=sideload_query_params
+        )
+
+    @pytest.mark.parametrize(
+        "sideloads, sideload_query_params",
+        [
+            ((), {"content": {"stats_keys": "true"}}),
+            (["content"], {"automation_blocker": {"stats_keys": "true"}}),
+        ],
+    )
+    def test_retrieve_annotation_with_query_params_for_missing_sideload(
+        self, elis_client_sync, sideloads, sideload_query_params
+    ):
+        client, http_client = elis_client_sync
+
+        with pytest.raises(
+            ValueError, match="Query params given for sideloads that are not requested"
+        ):
+            client.retrieve_annotation(
+                1, sideloads=sideloads, sideload_query_params=sideload_query_params
+            )
+
+        assert not http_client.fetch_resource.called
 
     def test_retrieve_annotation_with_none_automation_blocker(
         self, elis_client_sync, dummy_annotation

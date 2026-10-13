@@ -13,6 +13,7 @@ from rossum_api.domain_logic.annotations import (
     ExportFileFormats,
     is_annotation_imported,
     validate_list_annotations_params,
+    validate_sideload_query_params,
 )
 from rossum_api.domain_logic.documents import build_create_document_params
 from rossum_api.domain_logic.emails import build_email_import_files
@@ -978,7 +979,11 @@ class AsyncRossumAPIClient(
             yield self._deserializer(Resource.Annotation, a)
 
     async def retrieve_annotation(
-        self, annotation_id: int, sideloads: Sequence[Sideload] = ()
+        self,
+        annotation_id: int,
+        sideloads: Sequence[Sideload] = (),
+        *,
+        sideload_query_params: dict[str, dict[str, Any]] | None = None,
     ) -> AnnotationType:
         """Retrieve a single :class:`~rossum_api.models.annotation.Annotation` object.
 
@@ -988,6 +993,9 @@ class AsyncRossumAPIClient(
             ID of an annotation to be retrieved.
         sideloads
             List of additional objects to sideload
+        sideload_query_params
+            Query parameters for the request of each sideload, keyed by a sideload name
+            from ``sideloads`` (e.g. ``{"content": {"<param>": "<value>"}}``).
 
         References
         ----------
@@ -995,9 +1003,12 @@ class AsyncRossumAPIClient(
 
         https://rossum.app/api/docs/openapi/api/annotation/
         """
+        validate_sideload_query_params(sideloads, sideload_query_params)
         annotation_json = await self._http_client.fetch_one(Resource.Annotation, annotation_id)
         if sideloads:
-            await self._sideload(annotation_json, sideloads)
+            await self._sideload(
+                annotation_json, sideloads, sideload_query_params=sideload_query_params
+            )
         return self._deserializer(Resource.Annotation, annotation_json)
 
     async def poll_annotation(
@@ -2373,7 +2384,13 @@ class AsyncRossumAPIClient(
     async def authenticate(self) -> None:  # noqa: D102
         await self._http_client._authenticate()
 
-    async def _sideload(self, resource: dict[str, Any], sideloads: Sequence[Sideload]) -> None:
+    async def _sideload(
+        self,
+        resource: dict[str, Any],
+        sideloads: Sequence[Sideload],
+        *,
+        sideload_query_params: dict[str, dict[str, Any]] | None = None,
+    ) -> None:
         """Load sideloads manually.
 
         The API does not support sideloading when fetching a single resource, we need to load
@@ -2383,7 +2400,9 @@ class AsyncRossumAPIClient(
         async def fetch_sideload(sideload: Sideload) -> dict[str, Any] | None:
             sideload_url = resource[to_singular(sideload)]
             if sideload_url is not None:
-                return await self._http_client.request_json("GET", sideload_url)
+                return await self._http_client.request_json(
+                    "GET", sideload_url, params=(sideload_query_params or {}).get(sideload)
+                )
             return None
 
         sideload_tasks = [asyncio.create_task(fetch_sideload(sideload)) for sideload in sideloads]
