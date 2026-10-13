@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.17.0 (2026-10-13)
+
+### Features
+
+- Add sideload query params to retrieve_annotation
+  ([`3eadf6b`](https://github.com/rossumai/rossum-api/commit/3eadf6b3a906b4fa27abce1f1004ef0601687ffe))
+
+
 ## v3.16.1 (2026-08-24)
 
 ### Bug Fixes
