@@ -27,6 +27,7 @@ class Resource(Enum):
     HookTemplate = "hook_templates"
     Inbox = "inboxes"
     Email = "emails"
+    Label = "labels"
     Organization = "organizations"
     OrganizationGroup = "organization_groups"
     Queue = "queues"

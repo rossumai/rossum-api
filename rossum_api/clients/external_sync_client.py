@@ -21,6 +21,7 @@ from rossum_api.domain_logic.tasks import is_task_succeeded
 from rossum_api.domain_logic.upload import build_upload_files
 from rossum_api.domain_logic.urls import (
     EMAIL_IMPORT_URL,
+    LABELS_APPLY_URL,
     build_automation_insights_url,
     build_automation_projections_url,
     build_organization_limits_url,
@@ -48,6 +49,7 @@ from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
+from rossum_api.models.label import Label
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.organization_limit import OrganizationLimit
@@ -74,6 +76,7 @@ from rossum_api.types import (
     HookTemplateType,
     HookType,
     InboxType,
+    LabelType,
     OrganizationGroupType,
     OrganizationType,
     QueueType,
@@ -101,6 +104,7 @@ if TYPE_CHECKING:
         DocumentRelationOrdering,
         EmailTemplateOrdering,
         HookOrdering,
+        LabelOrdering,
         OrganizationGroupOrdering,
         OrganizationOrdering,
         QueueOrdering,
@@ -141,6 +145,7 @@ class SyncRossumAPIClient(
         HookTemplateType,
         InboxType,
         EmailType,
+        LabelType,
         OrganizationGroupType,
         OrganizationType,
         QueueType,
@@ -832,7 +837,7 @@ class SyncRossumAPIClient(
 
             assignees: :class:`~rossum_api.models.user.User` id, multiple values may be separated using a comma
 
-            labels: Label id, multiple values may be separated using a comma
+            labels: :class:`~rossum_api.models.label.Label` id, multiple values may be separated using a comma
 
             document: :class:`~rossum_api.models.document.Document` id
 
@@ -1739,6 +1744,153 @@ class SyncRossumAPIClient(
         email_template = self.internal_client.create(Resource.EmailTemplate, data)
         return self._deserializer(Resource.EmailTemplate, email_template)
 
+    # ##### LABELS #####
+    def list_labels(
+        self, ordering: Sequence[LabelOrdering] = (), **filters: Any
+    ) -> Iterator[LabelType]:
+        """Retrieve all :class:`~rossum_api.models.label.Label` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their URLs are used for sorting the results.
+        filters
+            id: ID of a :class:`~rossum_api.models.label.Label` (or multiple IDs,
+            comma-separated).
+
+            name: Name of a :class:`~rossum_api.models.label.Label`.
+
+            page_size: Number of results per page.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#list-labels
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        for label in self.internal_client.fetch_resources(Resource.Label, ordering, **filters):
+            yield self._deserializer(Resource.Label, label)
+
+    def retrieve_label(self, label_id: int) -> LabelType:
+        """Retrieve a single :class:`~rossum_api.models.label.Label` object.
+
+        Parameters
+        ----------
+        label_id
+            ID of a label to be retrieved.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#retrieve-label
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        label = self.internal_client.fetch_resource(Resource.Label, label_id)
+        return self._deserializer(Resource.Label, label)
+
+    def create_new_label(self, data: dict[str, Any]) -> LabelType:
+        """Create a new :class:`~rossum_api.models.label.Label` object.
+
+        Parameters
+        ----------
+        data
+            :class:`~rossum_api.models.label.Label` object configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#create-label
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        label = self.internal_client.create(Resource.Label, data)
+        return self._deserializer(Resource.Label, label)
+
+    def update_label(self, label_id: int, data: dict[str, Any]) -> LabelType:
+        """Update a :class:`~rossum_api.models.label.Label` object.
+
+        Parameters
+        ----------
+        label_id
+            ID of a label to be updated.
+        data
+            :class:`~rossum_api.models.label.Label` object configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#update-label
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        label = self.internal_client.replace(Resource.Label, label_id, data)
+        return self._deserializer(Resource.Label, label)
+
+    def update_part_label(self, label_id: int, data: dict[str, Any]) -> LabelType:
+        """Update part of a :class:`~rossum_api.models.label.Label` object.
+
+        Parameters
+        ----------
+        label_id
+            ID of a label to be updated.
+        data
+            :class:`~rossum_api.models.label.Label` object partial configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#partial-update-label
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        label = self.internal_client.update(Resource.Label, label_id, data)
+        return self._deserializer(Resource.Label, label)
+
+    def delete_label(self, label_id: int) -> None:
+        """Delete a :class:`~rossum_api.models.label.Label` object.
+
+        Parameters
+        ----------
+        label_id
+            ID of a label to be deleted.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#delete-label
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        return self.internal_client.delete(Resource.Label, label_id)
+
+    def apply_labels(
+        self,
+        annotations: Sequence[str],
+        add: Sequence[str] = (),
+        remove: Sequence[str] = (),
+    ) -> None:
+        """Add and/or remove :class:`~rossum_api.models.label.Label` objects on annotations.
+
+        Parameters
+        ----------
+        annotations
+            URLs of :class:`~rossum_api.models.annotation.Annotation` objects to be labeled.
+        add
+            URLs of :class:`~rossum_api.models.label.Label` objects to be added.
+        remove
+            URLs of :class:`~rossum_api.models.label.Label` objects to be removed.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/label/#addremove-annotation-labels
+
+        https://rossum.app/api/docs/openapi/api/label/
+        """
+        self.internal_client.request_json(
+            "POST",
+            LABELS_APPLY_URL,
+            json={
+                "operations": {"add": list(add), "remove": list(remove)},
+                "objects": {"annotations": list(annotations)},
+            },
+        )
+
     # ##### CONNECTORS #####
 
     def list_connectors(
@@ -2323,6 +2475,7 @@ SyncRossumAPIClientWithDefaultDeserializer = SyncRossumAPIClient[
     HookTemplate,
     Inbox,
     Email,
+    Label,
     OrganizationGroup,
     Organization,
     Queue,
