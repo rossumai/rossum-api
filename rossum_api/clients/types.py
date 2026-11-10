@@ -45,6 +45,8 @@ HookOrdering: TypeAlias = Literal[
     "id", "name", "type", "active", "config_url", "config_app_url", "events"
 ]
 
+LabelOrdering: TypeAlias = Literal["id", "name"]
+
 OrganizationOrdering: TypeAlias = Literal["id", "name"]
 
 OrganizationGroupOrdering: TypeAlias = Literal["id", "name"]

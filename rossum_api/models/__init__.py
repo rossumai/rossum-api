@@ -18,6 +18,7 @@ from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
+from rossum_api.models.label import Label
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.queue import Queue
@@ -60,6 +61,7 @@ RESOURCE_TO_MODEL = {
     Resource.HookTemplate: HookTemplate,
     Resource.Inbox: Inbox,
     Resource.Email: Email,
+    Resource.Label: Label,
     Resource.Organization: Organization,
     Resource.OrganizationGroup: OrganizationGroup,
     Resource.Queue: Queue,
