@@ -7,6 +7,7 @@ from rossum_api.domain_logic.urls import (
     build_export_url,
     build_full_login_url,
     build_resource_processing_duration_url,
+    build_resource_test_url,
     build_upload_url,
     build_url,
     parse_annotation_id_from_datapoint_url,
@@ -57,4 +58,17 @@ def test_build_resource_processing_duration_url():
     assert (
         build_resource_processing_duration_url(Resource.Annotation, 314528)
         == "annotations/314528/processing_duration"
+    )
+
+
+def test_build_resource_test_url():
+    assert (
+        build_resource_test_url(Resource.IntegrationCredential, 42)
+        == "integration_credentials/42/test"
+    )
+
+
+def test_build_resource_test_url_without_id():
+    assert (
+        build_resource_test_url(Resource.IntegrationCredential) == "integration_credentials/test"
     )

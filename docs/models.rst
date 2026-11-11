@@ -100,6 +100,34 @@ Models
 
 .. raw:: html
 
+   <h4>IntegrationCredential</h4>
+
+.. autoclass:: rossum_api.models.integration_credential.IntegrationCredential
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>IntegrationCredentialKind</h4>
+
+.. autoclass:: rossum_api.models.integration_credential.IntegrationCredentialKind
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>CoupaSandOAuth2Secret</h4>
+
+.. autoclass:: rossum_api.models.integration_credential.CoupaSandOAuth2Secret
+   :no-index-entry:
+
+.. raw:: html
+
+   <h4>IntegrationCredentialTestResult</h4>
+
+.. autoclass:: rossum_api.models.integration_credential.IntegrationCredentialTestResult
+   :no-index-entry:
+
+.. raw:: html
+
    <h4>Organization</h4>
 
 .. autoclass:: rossum_api.models.organization.Organization

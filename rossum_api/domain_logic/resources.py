@@ -26,6 +26,8 @@ class Resource(Enum):
     HookRunData = "hooks/logs"  # equivalent to hooks/run now
     HookTemplate = "hook_templates"
     Inbox = "inboxes"
+    IntegrationCredential = "integration_credentials"
+    IntegrationCredentialTestResult = "integration_credentials/test"
     Email = "emails"
     Organization = "organizations"
     OrganizationGroup = "organization_groups"

@@ -18,6 +18,10 @@ from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
+from rossum_api.models.integration_credential import (
+    IntegrationCredential,
+    IntegrationCredentialTestResult,
+)
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.queue import Queue
@@ -59,6 +63,8 @@ RESOURCE_TO_MODEL = {
     Resource.HookRunData: HookRunData,
     Resource.HookTemplate: HookTemplate,
     Resource.Inbox: Inbox,
+    Resource.IntegrationCredential: IntegrationCredential,
+    Resource.IntegrationCredentialTestResult: IntegrationCredentialTestResult,
     Resource.Email: Email,
     Resource.Organization: Organization,
     Resource.OrganizationGroup: OrganizationGroup,
@@ -101,5 +107,8 @@ def deserialize_default(resource: Resource, payload: JsonDict) -> Any:
 
     if resource == Resource.Rule:
         return Rule.from_dict(payload)
+
+    if resource == Resource.IntegrationCredential:
+        return IntegrationCredential.from_dict(payload)
 
     return dacite.from_dict(model_class, payload, config=DACITE_CONFIG)

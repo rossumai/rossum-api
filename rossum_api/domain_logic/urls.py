@@ -54,6 +54,12 @@ def build_resource_cancel_url(resource: Resource, id_: int) -> str:
     return f"{resource.value}/{id_}/cancel"
 
 
+def build_resource_test_url(resource: Resource, id_: int | None = None) -> str:
+    if id_ is None:
+        return f"{resource.value}/test"
+    return f"{resource.value}/{id_}/test"
+
+
 def build_resource_confirm_url(resource: Resource, id_: int) -> str:
     return f"{resource.value}/{id_}/confirm"
 

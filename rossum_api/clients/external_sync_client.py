@@ -33,6 +33,7 @@ from rossum_api.domain_logic.urls import (
     build_resource_processing_duration_url,
     build_resource_search_url,
     build_resource_start_url,
+    build_resource_test_url,
     build_upload_url,
     parse_resource_id_from_url,
 )
@@ -48,6 +49,11 @@ from rossum_api.models.group import Group
 from rossum_api.models.hook import Hook, HookRunData
 from rossum_api.models.hook_template import HookTemplate
 from rossum_api.models.inbox import Inbox
+from rossum_api.models.integration_credential import (
+    IntegrationCredential,
+    IntegrationCredentialKind,
+    IntegrationCredentialTestResult,
+)
 from rossum_api.models.organization import Organization
 from rossum_api.models.organization_group import OrganizationGroup
 from rossum_api.models.organization_limit import OrganizationLimit
@@ -74,6 +80,7 @@ from rossum_api.types import (
     HookTemplateType,
     HookType,
     InboxType,
+    IntegrationCredentialType,
     OrganizationGroupType,
     OrganizationType,
     QueueType,
@@ -101,6 +108,7 @@ if TYPE_CHECKING:
         DocumentRelationOrdering,
         EmailTemplateOrdering,
         HookOrdering,
+        IntegrationCredentialOrdering,
         OrganizationGroupOrdering,
         OrganizationOrdering,
         QueueOrdering,
@@ -140,6 +148,7 @@ class SyncRossumAPIClient(
         HookRunDataType,
         HookTemplateType,
         InboxType,
+        IntegrationCredentialType,
         EmailType,
         OrganizationGroupType,
         OrganizationType,
@@ -1739,6 +1748,203 @@ class SyncRossumAPIClient(
         email_template = self.internal_client.create(Resource.EmailTemplate, data)
         return self._deserializer(Resource.EmailTemplate, email_template)
 
+    # ##### INTEGRATION CREDENTIALS #####
+    def list_integration_credentials(
+        self, ordering: Sequence[IntegrationCredentialOrdering] = (), **filters: Any
+    ) -> Iterator[IntegrationCredentialType]:
+        """Retrieve all :class:`~rossum_api.models.integration_credential.IntegrationCredential` objects satisfying the specified filters.
+
+        Parameters
+        ----------
+        ordering
+            List of object names. Their URLs are used for sorting the results.
+        filters
+            id: ID of an :class:`~rossum_api.models.integration_credential.IntegrationCredential`
+            (or multiple IDs, comma-separated).
+
+            name: Name of an :class:`~rossum_api.models.integration_credential.IntegrationCredential`.
+
+            type: Type of an :class:`~rossum_api.models.integration_credential.IntegrationCredential`,
+            see
+            :class:`~rossum_api.models.integration_credential.IntegrationCredentialKind`.
+
+            page_size: Number of results per page.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#list-integration-credentials
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        for credential in self.internal_client.fetch_resources(
+            Resource.IntegrationCredential, ordering, **filters
+        ):
+            yield self._deserializer(Resource.IntegrationCredential, credential)
+
+    def retrieve_integration_credential(
+        self, integration_credential_id: int
+    ) -> IntegrationCredentialType:
+        """Retrieve a single :class:`~rossum_api.models.integration_credential.IntegrationCredential` object.
+
+        Parameters
+        ----------
+        integration_credential_id
+            ID of an integration credential to be retrieved.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#retrieve-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        credential = self.internal_client.fetch_resource(
+            Resource.IntegrationCredential, integration_credential_id
+        )
+        return self._deserializer(Resource.IntegrationCredential, credential)
+
+    def create_new_integration_credential(self, data: dict[str, Any]) -> IntegrationCredentialType:
+        """Create a new :class:`~rossum_api.models.integration_credential.IntegrationCredential` object.
+
+        Parameters
+        ----------
+        data
+            :class:`~rossum_api.models.integration_credential.IntegrationCredential`
+            object configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#create-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        credential = self.internal_client.create(Resource.IntegrationCredential, data)
+        return self._deserializer(Resource.IntegrationCredential, credential)
+
+    def update_integration_credential(
+        self, integration_credential_id: int, data: dict[str, Any]
+    ) -> IntegrationCredentialType:
+        """Update an :class:`~rossum_api.models.integration_credential.IntegrationCredential` object.
+
+        Parameters
+        ----------
+        integration_credential_id
+            ID of an integration credential to be updated.
+        data
+            :class:`~rossum_api.models.integration_credential.IntegrationCredential`
+            object configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#update-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        credential = self.internal_client.replace(
+            Resource.IntegrationCredential, integration_credential_id, data
+        )
+        return self._deserializer(Resource.IntegrationCredential, credential)
+
+    def update_part_integration_credential(
+        self, integration_credential_id: int, data: dict[str, Any]
+    ) -> IntegrationCredentialType:
+        """Update part of an :class:`~rossum_api.models.integration_credential.IntegrationCredential` object.
+
+        Parameters
+        ----------
+        integration_credential_id
+            ID of an integration credential to be updated.
+        data
+            :class:`~rossum_api.models.integration_credential.IntegrationCredential`
+            object partial configuration.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#partial-update-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        credential = self.internal_client.update(
+            Resource.IntegrationCredential, integration_credential_id, data
+        )
+        return self._deserializer(Resource.IntegrationCredential, credential)
+
+    def delete_integration_credential(self, integration_credential_id: int) -> None:
+        """Delete an :class:`~rossum_api.models.integration_credential.IntegrationCredential` object.
+
+        Parameters
+        ----------
+        integration_credential_id
+            ID of an integration credential to be deleted.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#delete-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        return self.internal_client.delete(
+            Resource.IntegrationCredential, integration_credential_id
+        )
+
+    def test_integration_credential(
+        self, integration_credential_id: int, secret: dict[str, Any] | None = None
+    ) -> IntegrationCredentialTestResult:
+        """Test a saved integration credential against the external system.
+
+        The tested object is an
+        :class:`~rossum_api.models.integration_credential.IntegrationCredential`.
+
+        Parameters
+        ----------
+        integration_credential_id
+            ID of an integration credential to be tested.
+        secret
+            Optional partial secret merged into the stored one for this test only, with the same
+            semantics as a partial update: send only the keys to change. The merged secret is not
+            saved, so an edit can be tested before submitting it.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#test-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        data = self.internal_client.request_json(
+            "POST",
+            build_resource_test_url(Resource.IntegrationCredential, integration_credential_id),
+            json={} if secret is None else {"secret": secret},
+        )
+        return self._deserializer(Resource.IntegrationCredentialTestResult, data)
+
+    def test_unsaved_integration_credential(
+        self, credential_type: IntegrationCredentialKind, secret: dict[str, Any]
+    ) -> IntegrationCredentialTestResult:
+        """Test an integration credential configuration without saving it.
+
+        The configuration is tested against the external system the same way as a saved
+        :class:`~rossum_api.models.integration_credential.IntegrationCredential` would be.
+
+        Parameters
+        ----------
+        credential_type
+            Type of the credential, see
+            :class:`~rossum_api.models.integration_credential.IntegrationCredentialKind`.
+        secret
+            Credential secret. Its shape depends on ``credential_type``.
+
+        References
+        ----------
+        https://rossum.app/api/docs/openapi/api/integration-credential/#test-unsaved-integration-credential
+
+        https://rossum.app/api/docs/openapi/api/integration-credential/
+        """
+        data = self.internal_client.request_json(
+            "POST",
+            build_resource_test_url(Resource.IntegrationCredential),
+            json={"type": credential_type, "secret": secret},
+        )
+        return self._deserializer(Resource.IntegrationCredentialTestResult, data)
+
     # ##### CONNECTORS #####
 
     def list_connectors(
@@ -2322,6 +2528,7 @@ SyncRossumAPIClientWithDefaultDeserializer = SyncRossumAPIClient[
     HookRunData,
     HookTemplate,
     Inbox,
+    IntegrationCredential,
     Email,
     OrganizationGroup,
     Organization,
