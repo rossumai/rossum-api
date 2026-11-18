@@ -99,6 +99,7 @@ if TYPE_CHECKING:
     from typing import Any
 
     import httpx
+    from typing_extensions import Unpack
 
     from rossum_api.clients.types import (
         AnnotationOrdering,
@@ -128,6 +129,7 @@ if TYPE_CHECKING:
         DatapointAutomationTarget,
         FieldErrorRateLimit,
     )
+    from rossum_api.payloads.label import LabelPatch, LabelWrite
     from rossum_api.types import HttpMethod, Sideload
 
 
@@ -1852,13 +1854,13 @@ class AsyncRossumAPIClient(
         label = await self._http_client.fetch_one(Resource.Label, label_id)
         return self._deserializer(Resource.Label, label)
 
-    async def create_new_label(self, data: dict[str, Any]) -> LabelType:
+    async def create_new_label(self, **fields: Unpack[LabelWrite]) -> LabelType:
         """Create a new :class:`~rossum_api.models.label.Label` object.
 
         Parameters
         ----------
-        data
-            :class:`~rossum_api.models.label.Label` object configuration.
+        fields
+            Fields of the label to be created, passed as keyword arguments.
 
         References
         ----------
@@ -1866,18 +1868,18 @@ class AsyncRossumAPIClient(
 
         https://rossum.app/api/docs/openapi/api/label/
         """
-        label = await self._http_client.create(Resource.Label, data)
+        label = await self._http_client.create(Resource.Label, dict(fields))
         return self._deserializer(Resource.Label, label)
 
-    async def update_label(self, label_id: int, data: dict[str, Any]) -> LabelType:
+    async def update_label(self, label_id: int, **fields: Unpack[LabelWrite]) -> LabelType:
         """Update a :class:`~rossum_api.models.label.Label` object.
 
         Parameters
         ----------
         label_id
             ID of a label to be updated.
-        data
-            :class:`~rossum_api.models.label.Label` object configuration.
+        fields
+            Fields of the label to be updated, passed as keyword arguments.
 
         References
         ----------
@@ -1885,18 +1887,18 @@ class AsyncRossumAPIClient(
 
         https://rossum.app/api/docs/openapi/api/label/
         """
-        label = await self._http_client.replace(Resource.Label, label_id, data)
+        label = await self._http_client.replace(Resource.Label, label_id, dict(fields))
         return self._deserializer(Resource.Label, label)
 
-    async def update_part_label(self, label_id: int, data: dict[str, Any]) -> LabelType:
+    async def update_part_label(self, label_id: int, **fields: Unpack[LabelPatch]) -> LabelType:
         """Update part of a :class:`~rossum_api.models.label.Label` object.
 
         Parameters
         ----------
         label_id
             ID of a label to be updated.
-        data
-            :class:`~rossum_api.models.label.Label` object partial configuration.
+        fields
+            Fields of the label to be updated (all optional), passed as keyword arguments.
 
         References
         ----------
@@ -1904,7 +1906,7 @@ class AsyncRossumAPIClient(
 
         https://rossum.app/api/docs/openapi/api/label/
         """
-        label = await self._http_client.update(Resource.Label, label_id, data)
+        label = await self._http_client.update(Resource.Label, label_id, dict(fields))
         return self._deserializer(Resource.Label, label)
 
     async def delete_label(self, label_id: int) -> None:

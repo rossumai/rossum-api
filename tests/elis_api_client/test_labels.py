@@ -75,7 +75,7 @@ class TestLabels:
         http_client.create.return_value = dummy_label
 
         data = {"name": "expedite", "color": "#FF5733"}
-        label = await client.create_new_label(data)
+        label = await client.create_new_label(**data)
 
         assert label == expected_label
 
@@ -87,7 +87,7 @@ class TestLabels:
 
         lid = dummy_label["id"]
         data = {"name": "expedite", "color": "#FF5733"}
-        label = await client.update_label(lid, data)
+        label = await client.update_label(lid, **data)
 
         assert label == expected_label
 
@@ -99,7 +99,7 @@ class TestLabels:
 
         lid = dummy_label["id"]
         data = {"color": "#FF5733"}
-        label = await client.update_part_label(lid, data)
+        label = await client.update_part_label(lid, **data)
 
         assert label == expected_label
 
@@ -184,7 +184,7 @@ class TestLabelsSync:
         http_client.create.return_value = dummy_label
 
         data = {"name": "expedite", "color": "#FF5733"}
-        label = client.create_new_label(data)
+        label = client.create_new_label(**data)
 
         assert label == expected_label
 
@@ -196,7 +196,7 @@ class TestLabelsSync:
 
         lid = dummy_label["id"]
         data = {"name": "expedite", "color": "#FF5733"}
-        label = client.update_label(lid, data)
+        label = client.update_label(lid, **data)
 
         assert label == expected_label
 
@@ -208,7 +208,7 @@ class TestLabelsSync:
 
         lid = dummy_label["id"]
         data = {"color": "#FF5733"}
-        label = client.update_part_label(lid, data)
+        label = client.update_part_label(lid, **data)
 
         assert label == expected_label
 

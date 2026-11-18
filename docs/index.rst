@@ -9,6 +9,7 @@ API Reference
 
    clients
    models
+   payloads
 
 Indices and tables
 ==================
