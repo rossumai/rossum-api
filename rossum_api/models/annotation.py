@@ -147,7 +147,7 @@ class Annotation:
     assignees
         List of URLs referencing users assigned to this annotation.
     labels
-        List of labels associated with this annotation.
+        List of label URLs associated with this annotation.
     restricted_access
         Indicates if the annotation has restricted access.
     training_enabled

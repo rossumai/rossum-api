@@ -100,6 +100,13 @@ Models
 
 .. raw:: html
 
+   <h4>Label</h4>
+
+.. autoclass:: rossum_api.models.label.Label
+   :no-index-entry:
+
+.. raw:: html
+
    <h4>Organization</h4>
 
 .. autoclass:: rossum_api.models.organization.Organization
